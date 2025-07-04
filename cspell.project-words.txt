@@ -1,0 +1,14 @@
+antrun
+Dedienne
+depchain
+fasterxml
+Hikari
+jdbc
+OSGI
+projectlombok
+starttls
+tofile
+Verticle
+Vertx
+vterx
+zaxxer

@@ -1,0 +1,39 @@
+    WITH T0 AS (
+      SELECT DISTINCT
+        SORDERQ.YSOH_PJT_0 AS ProjectNO,
+        SORDERQ.SOHNUM_0 AS OrderNO
+      FROM EXPLOIT.SORDERQ SORDERQ
+    ),
+    T1 AS (
+      SELECT DISTINCT
+          PORDERP.POHNUM_0 AS PurchaseNO,
+          PORDERP.POPLIN_0 AS PurchaseLine,
+          PORDERP.PJT_0 AS ProjectNO,
+          PORDERP.ITMREF_0 AS PN,
+          PORDERP.ITMDES_0 AS Description,
+          PORDER.CREUSR_0 AS CreateUser,
+	        AUTILIS.ADDEML_0 AS CreateUserEmail,
+          PORDER.ORDDAT_0 AS CreateDate
+      FROM EXPLOIT.PORDERP PORDERP
+      INNER JOIN EXPLOIT.PORDERQ AS PORDERQ
+          ON PORDERP.POHNUM_0=PORDERQ.POHNUM_0
+            AND PORDERP.POPLIN_0=PORDERQ.POPLIN_0
+            AND PORDERQ.PRHFCY_0 = '#{Site}'
+            AND PORDERP.PRHFCY_0 = '#{Site}'
+            AND PORDERQ.LINCLEFLG_0 != 2
+      INNER JOIN EXPLOIT.PORDER AS PORDER
+          ON PORDERP.POHNUM_0=PORDER.POHNUM_0      
+      LEFT JOIN EXPLOIT.AUTILIS AUTILIS
+            ON AUTILIS.USR_0 = PORDER.CREUSR_0
+      WHERE
+        ( SUBSTRING(PORDERP.PJT_0,2,2) = 'CC'
+          OR SUBSTRING(PORDERP.PJT_0,2,4) = 'DSRP'
+        )
+    )
+
+    SELECT T1.*
+    FROM T1
+    LEFT JOIN T0
+        ON T1.ProjectNO = T0.ProjectNO
+    WHERE T0.OrderNO IS null
+    ORDER BY T1.CreateDate ASC

@@ -1,0 +1,139 @@
+/*********************************************************************************************************************
+ * @Author                : Robert Huang<56649783@qq.com>                                                            *
+ * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
+ * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
+ * @LastEditDate          : 2025-07-05 00:40:47                                                                      *
+ * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
+ ********************************************************************************************************************/
+
+package com.da.sage.notice.jobs;
+
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.MessageFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
+import org.quartz.Job;
+import org.quartz.JobDataMap;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+
+import com.da.sage.notice.db.DB;
+import com.da.sage.notice.service.MailService;
+import com.da.sage.notice.utils.LocaleUtils;
+
+import io.vertx.core.json.JsonObject;
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
+public class DuplicatedPO implements Job {
+  @Override
+  public void execute(JobExecutionContext context) throws JobExecutionException {
+    String jobName = "DUPLICATE_PURCHASE_ORDER";
+
+    // Retrieve job parameters
+    JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
+    log.debug("Executing job {} with data: {}", jobName, jobDataMap);
+    String site = Optional.ofNullable(jobDataMap.getString("site")).orElse("---");
+    String language = Optional.ofNullable(jobDataMap.getString("language")).orElse("en_US");
+    String mailTo = Optional.ofNullable(jobDataMap.getString("mailTo")).orElse("");
+    String mailCc = Optional.ofNullable(jobDataMap.getString("mailCc")).orElse("");
+
+    Locale locale = LocaleUtils.getLocale(language);
+    ResourceBundle i18nMessage = ResourceBundle.getBundle("messages", locale);
+    DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, locale);
+    NumberFormat numberFormat = NumberFormat.getInstance(locale);
+
+    JsonObject params = new JsonObject();
+    params.put("Site", site);
+    DB.queryByFile("DuplicatedPO", params)
+        .onSuccess(list -> {
+          if (list.isEmpty()) {
+            log.info("No duplicated POs found for site: {}", site);
+          } else {
+            StringBuilder msg = new StringBuilder();
+            String newMailTo = "";
+            for (int i = 0; i < list.size(); i++) {
+              JsonObject obj = list.get(i);
+
+              msg.append("<hr />");
+              msg.append(MessageFormat.format("LINE_OF_TOTAL", i + 1, list.size()));
+              msg.append("<table><tbody>");
+              msg.append("<tr><td>")
+                  .append(i18nMessage.getString("PROJECT_NO"))
+                  .append("</td><td>")
+                  .append(obj.getString("ProjectNO"))
+                  .append("</td></tr>");
+              msg.append("<tr><td>")
+                  .append(i18nMessage.getString("PN"))
+                  .append("</td><td>")
+                  .append(obj.getString("PN"))
+                  .append("</td></tr>");
+              msg.append("<tr><td>")
+                  .append(MessageFormat.format(i18nMessage.getString("N_PURCHASE_NO"), obj.getString("Seq")))
+                  .append("</td><td>")
+                  .append(obj.getString("PurchaseNO"))
+                  .append("-")
+                  .append(obj.getString("PurchaseLine"))
+                  .append("</td></tr>");
+              msg.append("<tr><td>")
+                  .append(MessageFormat.format(i18nMessage.getString("N_PURCHASE_DATE"), obj.getString("Seq")))
+                  .append("</td><td>")
+                  .append(dateFormat.format(new Date(obj.getLong("PurchaseDate"))))
+                  .append("</td></tr>");
+              msg.append("<tr><td>")
+                  .append(MessageFormat.format(i18nMessage.getString("N_PURCHASE_PURCHASER"), obj.getString("Seq")))
+                  .append("</td><td>")
+                  .append(obj.getString("Purchaser"))
+                  .append("</td></tr>");
+              msg.append("<tr><td>")
+                  .append(MessageFormat.format(i18nMessage.getString("N_PURCHASE_QTY"), obj.getString("Seq")))
+                  .append("</td><td>")
+                  .append(numberFormat.format(obj.getDouble("PurchaseQty")))
+                  .append("</td></tr>");
+              msg.append("<tr><td>")
+                  .append(MessageFormat.format(i18nMessage.getString("N_PURCHASE_AMOUNT"), obj.getString("Seq")))
+                  .append("</td><td>")
+                  .append(numberFormat.format(obj.getDouble("Cost")))
+                  .append(" ")
+                  .append(obj.getString("Currency"))
+                  .append("</td></tr>");
+              msg.append("<tr><td>")
+                  .append(i18nMessage.getString("TOTAL_PURCHASE_QTY_BY_PROJECT"))
+                  .append("</td><td>")
+                  .append(numberFormat.format(obj.getDouble("TotalPurchaseQty")))
+                  .append("</td></tr>");
+              msg.append("<tr><td>")
+                  .append(i18nMessage.getString("TOTAL_SALES_QTY_BY_PROJECT"))
+                  .append("</td><td>")
+                  .append(numberFormat.format(obj.getDouble("TotalSalesQty")))
+                  .append("</td></tr>");
+              msg.append("</tbody></table>");
+
+              newMailTo += ";" + obj.getString("PurchaserMail");
+            }
+
+            log.debug("{} [{}]\n{}", jobName, site, msg.toString());
+
+            if (msg.length() > 0) {
+              msg.append("<hr />");
+              msg.append(i18nMessage.getString("HOW_TO_DISABLE_DUPLICATE_PO_NOTICE"));
+
+              MailService.sendEmail(
+                  "[SageAssistant]" + "[" + site + "]" +
+                      i18nMessage.getString(jobName) + ' ' +
+                      MessageFormat.format("TOTAL_LINE", list.size()),
+                  msg.toString(),
+                  mailTo + newMailTo,
+                  mailCc);
+            }
+          }
+        }).onFailure(err -> {
+          log.error("Error checking duplicated POs for site {}: {}", site, err.getMessage());
+        });
+  }
+
+}

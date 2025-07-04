@@ -1,0 +1,19 @@
+[Unit]
+Description=Java sage notice service
+Wants=network.target
+After=network.target
+
+[Service]
+Type=simple
+
+# change 'sage-notice' to your folder
+WorkingDirectory=/usr/share/java/sage-notice
+ExecStart=/usr/share/java/sage-notice/startup.sh
+ExecStop=/usr/share/java/sage-notice/shutdown.sh
+
+# change them to your user:group
+User=yourName
+Group=yourGroup
+
+[Install]
+WantedBy=multi-user.target

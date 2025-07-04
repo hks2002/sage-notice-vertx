@@ -1,0 +1,77 @@
+{
+  "mssql": {
+    "jdbcUrl": "jdbc:sqlserver://127.0.0.1\\sage;DatabaseName=sage;TrustServerCertificate=true;",
+    "user": "docs",
+    "password": "password",
+    "poolOptions": {
+      "maximumPoolSize": 10,
+      "minimumIdle": 1,
+      "idleTimeout": 60000
+    }
+  },
+  "mailServer": {
+    "host": "smtp.office365.com",
+    "port": 587,
+    "sender": "xxx@yourdomain.com",
+    "password": "your_password"
+  },
+  "notices": {
+    "DuplicatedPO": [
+      {
+        "site": "ZHU",
+        "cron": "0/15 * * ? * MON-FRI",
+        "language": "zh_CN",
+        "mailTo": ""
+      }
+    ],
+    "DuplicatedRA": [
+      {
+        "site": "ZHU",
+        "cron": "2/15 * * ? * MON-FRI",
+        "language": "zh_CN",
+        "mailTo": ""
+      }
+    ],
+    "MixWOProjectNO": [
+      {
+        "site": "ZHU",
+        "cron": "4/15 * * ? * MON-FRI",
+        "language": "zh_CN",
+        "mailTo": ""
+      }
+    ],
+    "MixPOProjectNO": [
+      {
+        "site": "ZHU",
+        "cron": "6/15 * * ? * MON-FRI",
+        "language": "zh_CN",
+        "mailTo": ""
+      }
+    ],
+    "DuplicatedWO": [
+      {
+        "site": "ZHU",
+        "cron": "8/15 * * ? * MON-FRI",
+        "language": "zh_CN",
+        "mailTo": ""
+      }
+    ],
+    "ProjectProfit": [
+      {
+        "site": "ZHU",
+        "cron": "10/15 * * ? * MON-FRI",
+        "language": "zh_CN",
+        "profitRate": "2.0",
+        "mailTo": ""
+      }
+    ],
+    "WrongPOProject": [
+      {
+        "site": "ZHU",
+        "cron": "12/15 * * ? * MON-FRI",
+        "language": "zh_CN",
+        "mailTo": ""
+      }
+    ]
+  }
+}
