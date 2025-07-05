@@ -159,7 +159,7 @@
             <manifestEntries>
               <App-Name>${project.name}</App-Name>
               <App-Version>${project.version}</App-Version>
-              <Main-Class>com.da.docs.VertxApp</Main-Class>
+              <Main-Class>com.da.sage.notice.VertxApp</Main-Class>
             </manifestEntries>
           </archive>
         </configuration>
@@ -239,7 +239,7 @@
                   <manifestEntries>
                     <App-Name>${project.name}</App-Name>
                     <App-Version>${project.version}</App-Version>
-                    <Main-Class>com.da.docs.VertxApp</Main-Class>
+                    <Main-Class>com.da.sage.notice.VertxApp</Main-Class>
                   </manifestEntries>
                 </transformer>
                 <transformer
