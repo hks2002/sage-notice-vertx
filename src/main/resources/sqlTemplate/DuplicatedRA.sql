@@ -43,6 +43,7 @@
     SELECT DISTINCT
       PRECEIPTD.PJT_0,
       PRECEIPTD.ITMREF_0,
+      PRECEIPTD.ITMDES_0,
       PRECEIPTD.PTHNUM_0,
       PRECEIPTD.PTDLIN_0,
       PRECEIPTD.CREDAT_0 AS ReceiptDate,
@@ -83,6 +84,7 @@
     SELECT DISTINCT
       PRECEIPTD.PJT_0,
       PRECEIPTD.ITMREF_0,
+      PRECEIPTD.ITMDES_0,
       PRECEIPTD.PTHNUM_0,
       PRECEIPTD.PTDLIN_0,
       PRECEIPTD.CREDAT_0 AS ReceiptDate,
@@ -127,7 +129,8 @@
 
   SELECT
       T2.PJT_0 AS ProjectNO,
-      T2.ITMREF_0 AS PN,
+      T2.ITMREF_0 AS PN,       
+      T2.ITMDES_0 AS Description,
       T2.PTHNUM_0 AS ReceiptNO,
       T2.PTDLIN_0 AS ReceiptLine,
       T2.ReceiptDate,
@@ -155,7 +158,8 @@
 
   SELECT
       T3.PJT_0 AS ProjectNO,
-      T3.ITMREF_0 AS PN,
+      T3.ITMREF_0 AS PN,       
+      T3.ITMDES_0 AS Description,
       T3.PTHNUM_0 AS ReceiptNO,
       T3.PTDLIN_0 AS ReceiptLine,
       T3.ReceiptDate,

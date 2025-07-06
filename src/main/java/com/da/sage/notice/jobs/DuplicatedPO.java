@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-05 00:40:47                                                                      *
+ * @LastEditDate          : 2025-07-05 23:05:33                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -71,6 +71,11 @@ public class DuplicatedPO implements Job {
                   .append(i18nMessage.getString("PN"))
                   .append("</td><td>")
                   .append(obj.getString("PN"))
+                  .append("</td></tr>");
+              msg.append("<tr><td>")
+                  .append(i18nMessage.getString("DESCRIPTION"))
+                  .append("</td><td>")
+                  .append(obj.getString("Description"))
                   .append("</td></tr>");
               msg.append("<tr><td>")
                   .append(MessageFormat.format(i18nMessage.getString("N_PURCHASE_NO"), obj.getString("Seq")))

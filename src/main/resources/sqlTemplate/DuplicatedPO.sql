@@ -43,6 +43,7 @@
         SELECT DISTINCT
             PORDERP.PJT_0,
             PORDERP.ITMREF_0,
+            PORDERP.ITMDES_0,
             PORDERP.POHNUM_0,
             PORDERP.POPLIN_0,
             PORDERP.CREDAT_0,
@@ -75,7 +76,8 @@
     T3 AS (    -- find purchase line of Work order for stock project
         SELECT DISTINCT
             PORDERP.PJT_0,
-            PORDERP.ITMREF_0,
+            PORDERP.ITMREF_0,            
+            PORDERP.ITMDES_0,
             PORDERP.POHNUM_0,
             PORDERP.POPLIN_0,
             PORDERP.CREDAT_0,
@@ -112,7 +114,8 @@
 
     SELECT
         T2.PJT_0 AS ProjectNO,
-        T2.ITMREF_0 AS PN,
+        T2.ITMREF_0 AS PN,        
+        T2.ITMDES_0 AS Description,
         T2.POHNUM_0 AS PurchaseNO,
         T2.POPLIN_0 AS PurchaseLine,
         T2.QTYSTU_0 AS PurchaseQty,
@@ -136,7 +139,8 @@
 
     SELECT
         T3.PJT_0 AS ProjectNO,
-        T3.ITMREF_0 AS PN,
+        T3.ITMREF_0 AS PN,        
+        T3.ITMDES_0 AS Description,
         T3.POHNUM_0 AS PurchaseNO,
         T3.POPLIN_0 AS PurchaseLine,
         T3.QTYSTU_0 AS PurchaseQty,
