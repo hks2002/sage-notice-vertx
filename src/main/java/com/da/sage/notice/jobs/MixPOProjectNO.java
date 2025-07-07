@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-04 11:24:22                                                                      *
+ * @LastEditDate          : 2025-07-07 13:31:40                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -58,8 +58,6 @@ public class MixPOProjectNO implements Job {
             for (int i = 0; i < list.size(); i++) {
               JsonObject obj = list.get(i);
 
-              msg.append("<hr />");
-              msg.append(MessageFormat.format("LINE_OF_TOTAL", i + 1, list.size()));
               msg.append("<table><tbody>");
               msg.append("<tr><td>")
                   .append(i18nMessage.getString("PROJECT_NO"))
@@ -92,6 +90,8 @@ public class MixPOProjectNO implements Job {
                   .append(dateFormat.format(new Date(obj.getLong("CreateDate"))))
                   .append("</td></tr>");
               msg.append("</tbody></table>");
+              msg.append("<hr />");
+              msg.append(MessageFormat.format(i18nMessage.getString("LINE_OF_TOTAL"), i + 1, list.size()));
 
               newMailTo += ";" + obj.getString("CreateUserEmail");
             }
@@ -102,7 +102,7 @@ public class MixPOProjectNO implements Job {
               MailService.sendEmail(
                   "[SageAssistant]" + "[" + site + "]" +
                       i18nMessage.getString(jobName) + ' ' +
-                      MessageFormat.format("TOTAL_LINE", list.size()),
+                      MessageFormat.format(i18nMessage.getString("TOTAL_LINE"), list.size()),
                   msg.toString(),
                   mailTo + newMailTo,
                   mailCc);

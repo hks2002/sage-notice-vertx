@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 14:37:45                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-04 19:04:48                                                                      *
+ * @LastEditDate          : 2025-07-07 12:39:16                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -50,7 +50,7 @@ public class MailService {
     PASSWORD = password;
   }
 
-  public static void sendEmail(String subject, String body, String mailTo, String mailCC) {
+  public static void sendEmail(String subject, String body, String mailTo, String mailCc) {
 
     Properties props = new Properties();
     props.put("mail.smtp.host", HOST);
@@ -69,8 +69,8 @@ public class MailService {
         }
       }
     }
-    if (mailCC != null && !mailCC.isEmpty()) {
-      for (String addr : mailCC.split(";")) {
+    if (mailCc != null && !mailCc.isEmpty()) {
+      for (String addr : mailCc.split(";")) {
         if (addr != null && !addr.trim().isEmpty()) {
           ccSet.add(addr.trim());
         }
@@ -94,6 +94,8 @@ public class MailService {
       // build email content
       MimeMessage message = new MimeMessage(session);
       message.setFrom(new InternetAddress(SENDER));
+      log.debug("To recipients: {}", String.join(";", toSet));
+      log.debug("CC recipients: {}", String.join(";", ccSet));
       message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(String.join(";", toSet)));
       if (!ccSet.isEmpty()) {
         message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(String.join(";", ccSet)));
