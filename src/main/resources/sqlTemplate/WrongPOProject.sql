@@ -10,7 +10,7 @@
           PORDERP.POPLIN_0 AS PurchaseLine,
           PORDERP.PJT_0 AS ProjectNO,
           PORDERP.ITMREF_0 AS PN,
-          PORDERP.ITMDES_0 AS Description,
+          RTRIM(PORDERP.ITMDES1_0 +' '+ PORDERP.ITMDES2_0 +' '+ PORDERP.ITMDES3_0) AS Description,
           PORDER.CREUSR_0 AS CreateUser,
 	        AUTILIS.ADDEML_0 AS CreateUserEmail,
           PORDER.ORDDAT_0 AS CreateDate
