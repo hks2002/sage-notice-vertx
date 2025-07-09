@@ -4,13 +4,13 @@
             PORDERP.POHNUM_0,
             PORDERP.POPLIN_0,
             PORDERP.PJT_0,
-						PORDERP.ITMREF_0,
+            PORDERP.ITMREF_0,
             RTRIM(PORDERP.ITMDES1_0 +' '+ PORDERP.ITMDES2_0 +' '+ PORDERP.ITMDES3_0) AS Description,
             PORDERQ.QTYSTU_0,
             PORDERQ.LINATIAMT_0,
             PORDERQ.NETCUR_0,
             PORDERP.CREDAT_0,
-            PORDERP.CREUSR_0,            
+            PORDERP.CREUSR_0,
             AUTILIS.ADDEML_0
         FROM
             EXPLOIT.PORDERP AS PORDERP
@@ -39,13 +39,13 @@
             T0.POHNUM_0,
             T0.POPLIN_0,
             T0.PJT_0,
-						T0.ITMREF_0,
+            T0.ITMREF_0,
             T0.Description,
             T0.QTYSTU_0,
             T0.LINATIAMT_0,
             T0.NETCUR_0,
             T0.CREDAT_0,
-            T0.CREUSR_0,          
+            T0.CREUSR_0,
             T0.ADDEML_0
         FROM
             T0

@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-07 12:45:21                                                                      *
+ * @LastEditDate          : 2025-07-09 14:18:41                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -49,7 +49,7 @@ public class DeadPurchaseLine implements Job {
 
     JsonObject params = new JsonObject();
     params.put("Site", site);
-    DB.queryByFile("WrongPOProject", params)
+    DB.queryByFile("DeadPurchaseLine", params)
         .onSuccess(list -> {
           if (list.isEmpty()) {
             log.info("No dead purchase line found for site: {}", site);
@@ -95,7 +95,7 @@ public class DeadPurchaseLine implements Job {
                   .append("</td><td>")
                   .append(obj.getFloat("PurchaseAmount"))
                   .append(" ")
-                  .append(obj.getFloat("PurchaseCurrency"))
+                  .append(obj.getString("PurchaseCurrency"))
                   .append("</td></tr>");
               msg.append("<tr><td>")
                   .append(i18nMessage.getString("PURCHASE_DATE"))
@@ -133,7 +133,6 @@ public class DeadPurchaseLine implements Job {
 
               newMailTo += ";" + obj.getString("PurchaserEmail");
             }
-
             log.debug("{} [{}]\n{}", jobName, site, msg.toString());
 
             if (msg.length() > 0) {
