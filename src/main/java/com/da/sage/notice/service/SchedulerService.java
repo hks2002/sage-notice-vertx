@@ -2,11 +2,13 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 17:08:05                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-04 23:51:42                                                                      *
+ * @LastEditDate          : 2025-07-09 15:11:41                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
 package com.da.sage.notice.service;
+
+import java.util.UUID;
 
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
@@ -67,14 +69,15 @@ public class SchedulerService {
           JobDataMap jobDataMap = new JobDataMap();
           jobDataMap.putAll(config.getMap());
 
+          String uuid = UUID.randomUUID().toString();
           @SuppressWarnings("unchecked")
           JobDetail job = JobBuilder.newJob((Class<? extends org.quartz.Job>) jobClass)
-              .withIdentity(jobName + '-' + site, "SageNotice")
+              .withIdentity(jobName + '-' + site + '-' + uuid, "SageNotice")
               .usingJobData(jobDataMap) // Example job data, can be customized
               .build();
 
           Trigger trigger = TriggerBuilder.newTrigger()
-              .withIdentity(jobName + '-' + site + '-' + "Trigger", "SageNotice")
+              .withIdentity(jobName + '-' + site + '-' + uuid + '-' + "Trigger", "SageNotice")
               .withSchedule(CronScheduleBuilder.cronSchedule(cron))
               .build();
           scheduler.scheduleJob(job, trigger);
