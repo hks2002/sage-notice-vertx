@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-07 13:31:33                                                                      *
+ * @LastEditDate          : 2025-07-09 14:02:10                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -29,7 +29,7 @@ import io.vertx.core.json.JsonObject;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class WrongPOProject implements Job {
+public class WrongPOProjectNO implements Job {
   @Override
   public void execute(JobExecutionContext context) throws JobExecutionException {
     String jobName = "WRONG_PO_PROJECT";
@@ -49,7 +49,7 @@ public class WrongPOProject implements Job {
 
     JsonObject params = new JsonObject();
     params.put("Site", site);
-    DB.queryByFile("WrongPOProject", params)
+    DB.queryByFile("WrongPOProjectNO", params)
         .onSuccess(list -> {
           if (list.isEmpty()) {
             log.info("No wrong PO project found for site: {}", site);

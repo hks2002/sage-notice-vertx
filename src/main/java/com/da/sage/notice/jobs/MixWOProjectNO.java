@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-07 13:31:38                                                                      *
+ * @LastEditDate          : 2025-07-09 14:00:57                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -48,7 +48,7 @@ public class MixWOProjectNO implements Job {
     // NumberFormat numberFormat = NumberFormat.getInstance(locale);
 
     JsonObject params = new JsonObject();
-    DB.queryByFile("MixWOProject", params)
+    DB.queryByFile("MixWOProjectNO", params)
         .onSuccess(list -> {
           if (list.isEmpty()) {
             log.info("No mix project between ZHU and YSH found for site: {}", site);
