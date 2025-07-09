@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-09 14:18:41                                                                      *
+ * @LastEditDate          : 2025-07-09 19:27:38                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -128,8 +128,8 @@ public class DeadPurchaseLine implements Job {
                   .append(dateFormat.format(new Date(obj.getLong("OrderDate"))))
                   .append("</td></tr>");
               msg.append("</tbody></table>");
-              msg.append("<hr />");
               msg.append(MessageFormat.format(i18nMessage.getString("LINE_OF_TOTAL"), i + 1, list.size()));
+              msg.append("<hr />");
 
               newMailTo += ";" + obj.getString("PurchaserEmail");
             }

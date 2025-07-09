@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-08 16:00:36                                                                      *
+ * @LastEditDate          : 2025-07-09 19:27:00                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -96,14 +96,14 @@ public class LongTimeSOAction implements Job {
               msg.append("<tr><td>")
                   .append(i18nMessage.getString("UNIT"))
                   .append("</td><td>")
-                  .append(obj.getInteger("Unit"))
+                  .append(obj.getString("Unit"))
                   .append("</td></tr>");
               msg.append("<tr><td>")
                   .append(i18nMessage.getString("ORDER_PRICE"))
                   .append("</td><td>")
                   .append(obj.getFloat("OrderPrice"))
                   .append(" ")
-                  .append(obj.getFloat("OrderCurrency"))
+                  .append(obj.getString("OrderCurrency"))
                   .append("</td></tr>");
               msg.append("<tr><td>")
                   .append(i18nMessage.getString("MARK"))
@@ -166,8 +166,8 @@ public class LongTimeSOAction implements Job {
                   .append(obj.getInteger("DaysLeft"))
                   .append("</td></tr>");
               msg.append("</tbody></table>");
-              msg.append("<hr />");
               msg.append(MessageFormat.format(i18nMessage.getString("LINE_OF_TOTAL"), i + 1, list.size()));
+              msg.append("<hr />");
 
             }
 

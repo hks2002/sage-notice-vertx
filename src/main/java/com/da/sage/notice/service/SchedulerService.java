@@ -2,23 +2,26 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 17:08:05                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-09 15:11:41                                                                      *
+ * @LastEditDate          : 2025-07-09 17:35:47                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
 package com.da.sage.notice.service;
 
+import java.util.Set;
 import java.util.UUID;
 
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.impl.matchers.GroupMatcher;
 
 import com.da.sage.notice.utils.PackageUtils;
 
@@ -86,6 +89,18 @@ public class SchedulerService {
       }
     } catch (SchedulerException e) {
       log.error("Error starting scheduler {}", e.getMessage());
+    }
+  }
+
+  public static void runAll() {
+    try {
+      Set<JobKey> jobKeySet = scheduler.getJobKeys(GroupMatcher.anyGroup());
+      for (var key : jobKeySet) {
+        log.info("{}", key.getName());
+        scheduler.triggerJob(key);
+      }
+    } catch (SchedulerException e) {
+      log.error(e.getMessage());
     }
   }
 }

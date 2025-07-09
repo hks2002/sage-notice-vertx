@@ -21,10 +21,10 @@
             ON AUTILIS.USR_0 = PORDERP.CREUSR_0
         WHERE
             PORDERP.PRHFCY_0 = '#{Site}'
-            AND PORDERQ.LINCLEFLG_0 = 1 --- line open flag, exclude manual closed po line
+            AND PORDERQ.LINCLEFLG_0 = 1 --- line open flag, exclude manual closed(value=2) po line
             AND PORDERP.NETPRI_0 > 0 --- exclude manually mark 0, it's an error line
             AND SUBSTRING(PORDERP.POHNUM_0, 2, 2) != 'CT' --- exclude delivery
-            ),
+    ),
     T1 AS (
         SELECT DISTINCT
             PRECEIPTD.POHNUM_0,

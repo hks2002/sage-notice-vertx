@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-07 13:31:36                                                                      *
+ * @LastEditDate          : 2025-07-09 19:26:17                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -128,6 +128,8 @@ public class ProjectProfit implements Job {
                     .append(i18nMessage.getString("PROJECT_PROFIT"))
                     .append("</td><td style=\"color: red;\">")
                     .append(numberFormat.format(obj.getDouble("Profit")))
+                    .append(" ")
+                    .append(obj.getString("LocalCurrency"))
                     .append("</td></tr>");
                 msg.append("<tr><td style=\"color: red;\">")
                     .append(i18nMessage.getString("PROJECT_PROFIT_RATE"))
@@ -139,6 +141,8 @@ public class ProjectProfit implements Job {
                     .append(i18nMessage.getString("PROJECT_PROFIT"))
                     .append("</td><td>")
                     .append(numberFormat.format(obj.getDouble("Profit")))
+                    .append(" ")
+                    .append(obj.getString("LocalCurrency"))
                     .append("</td></tr>");
                 msg.append("<tr><td>")
                     .append(i18nMessage.getString("PROJECT_PROFIT_RATE"))
@@ -147,8 +151,8 @@ public class ProjectProfit implements Job {
                     .append("</td></tr>");
               }
               msg.append("</tbody></table>");
-              msg.append("<hr />");
               msg.append(MessageFormat.format(i18nMessage.getString("LINE_OF_TOTAL"), i + 1, list.size()));
+              msg.append("<hr />");
 
               newMailTo += ";" + obj.getString("PurchaserMail");
             }

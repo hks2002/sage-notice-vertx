@@ -2,15 +2,14 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-05-19 16:54:08                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-03 15:18:46                                                                      *
+ * @LastEditDate          : 2025-07-09 16:02:03                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
 package com.da.sage.notice;
 
-import io.vertx.config.ConfigRetriever;
-import io.vertx.config.ConfigRetrieverOptions;
-import io.vertx.config.ConfigStoreOptions;
+import com.da.sage.notice.utils.ConfigUtils;
+
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxBuilder;
 import io.vertx.core.VertxOptions;
@@ -31,41 +30,18 @@ public class VertxAppHooks implements VertxApplicationHooks {
   @Override
   public void beforeDeployingVerticle(HookContext context) {
     Vertx vertx = context.vertx();
-    ConfigRetrieverOptions retrieveOptions = new ConfigRetrieverOptions();
+    JsonObject defaultConfig = ConfigUtils.getConfig(vertx);
+    // this config could passing by command line with args
+    // -config=#{absolutePath.Config}
+    JsonObject deploymentConfig = context.deploymentOptions().getConfig();
 
-    if (vertx.fileSystem().existsBlocking("config.json")) {
-      retrieveOptions.addStore(new ConfigStoreOptions().setType("file")
-          .setConfig(JsonObject.of("path", "config.json")));
-    }
-    if (vertx.fileSystem().existsBlocking("config-prod.json")) {
-      retrieveOptions.addStore(new ConfigStoreOptions().setType("file")
-          .setConfig(JsonObject.of("path", "config-prod.json")));
-    }
-    if (vertx.fileSystem().existsBlocking("config-test.json")) {
-      retrieveOptions.addStore(new ConfigStoreOptions().setType("file")
-          .setConfig(JsonObject.of("path", "config-test.json")));
-    }
-    ConfigRetriever cfgRetriever = ConfigRetriever.create(vertx, retrieveOptions);
-
-    try {
-      log.info("Loading config for verticle");
-      // Load default config, ❗️❗️❗️ blocking call ❗️❗️❗️
-      JsonObject defaultConfig = cfgRetriever.getConfig().toCompletionStage().toCompletableFuture().get();
-      // this config could passing by command line with args
-      // -config=#{absolutePath.Config}
-      JsonObject deploymentConfig = context.deploymentOptions().getConfig();
-
-      defaultConfig.getMap().forEach((k, v) -> {
-        deploymentConfig.put(k, v);
-      });
-      log.info("Final Config: \n{}",
-          deploymentConfig.encodePrettily()
-              // .replaceAll("(\\\"user\\\" : \\\").*(\\\",)", "$1******$2")
-              .replaceAll("(\\\"password\\\" : \\\").*(\\\",)", "$1******$2"));
-
-    } catch (Exception e) {
-      log.error("{}", e);
-    }
+    defaultConfig.getMap().forEach((k, v) -> {
+      deploymentConfig.put(k, v);
+    });
+    log.info("Final Config: \n{}",
+        deploymentConfig.encodePrettily()
+            // .replaceAll("(\\\"user\\\" : \\\").*(\\\",)", "$1******$2")
+            .replaceAll("(\\\"password\\\" : \\\").*(\\\",)", "$1******$2"));
 
   }
 
