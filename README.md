@@ -25,4 +25,17 @@ The sage notice server developed with vertx.
    > Edit`JAVA_HOME/conf/security/java.security`, Delete `dk.tls.disabledAlgorithms`disabled algorithms value；
    > Edit`/etc/crypto-policies/back-ends/java.config`, Delete `jdk.tls.disabledAlgorithms`disabled algorithms value；
 
+####  notice config sample
+```
+"notices": {
+    "DeadPurchaseLine": [
+      {
+        "site": "SGP",
+        "cron": "0/15 * * ? * MON-FRI",
+        "language": "zh_CN",
+        "mailTo": ""
+      }
+    ]
+  }
+```
 
