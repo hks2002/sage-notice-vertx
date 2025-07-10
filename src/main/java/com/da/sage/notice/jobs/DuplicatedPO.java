@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-10 15:42:43                                                                      *
+ * @LastEditDate          : 2025-07-10 15:49:55                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -119,6 +119,11 @@ public class DuplicatedPO implements Job {
             log.debug("{} [{}]\n{}", jobName, site, msg.toString());
 
             if (msg.length() > 0) {
+              String msgNotes = """
+                  <hr />
+                  Only open purchase lines.
+                  """;
+
               msg.append("<hr />");
               msg.append(i18nMessage.getString("HOW_TO_DISABLE_DUPLICATE_PO_NOTICE"));
 
@@ -126,7 +131,7 @@ public class DuplicatedPO implements Job {
                   "[SageAssistant]" + "[" + site + "]" +
                       i18nMessage.getString(jobName) + ' ' +
                       MessageFormat.format(i18nMessage.getString("TOTAL_LINE"), list.size()),
-                  msg.toString(),
+                  msg.toString() + msgNotes,
                   mailTo + newMailTo,
                   mailCc);
             }
