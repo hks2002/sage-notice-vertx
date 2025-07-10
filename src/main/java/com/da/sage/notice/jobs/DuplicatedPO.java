@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-10 12:08:04                                                                      *
+ * @LastEditDate          : 2025-07-10 15:42:43                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -113,7 +113,7 @@ public class DuplicatedPO implements Job {
               msg.append(MessageFormat.format(i18nMessage.getString("LINE_OF_TOTAL"), i + 1, list.size()));
               msg.append("<hr />");
 
-              newMailTo += ";" + obj.getString("PurchaserMail");
+              newMailTo += ";" + obj.getString("PurchaserEmail");
             }
 
             log.debug("{} [{}]\n{}", jobName, site, msg.toString());
