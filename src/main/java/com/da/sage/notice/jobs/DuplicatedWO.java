@@ -2,13 +2,12 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-09 19:27:07                                                                      *
+ * @LastEditDate          : 2025-07-10 12:13:51                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
 package com.da.sage.notice.jobs;
 
-import java.sql.Date;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 //import java.text.NumberFormat;
@@ -78,7 +77,7 @@ public class DuplicatedWO implements Job {
               msg.append("<tr><td>")
                   .append(i18nMessage.getString("CREATE_DATE"))
                   .append("</td><td>")
-                  .append(dateFormat.format(new Date(obj.getLong("CreateDate"))))
+                  .append(LocaleUtils.getDate(obj.getLong("CreateDate"), locale))
                   .append("</td></tr>");
               msg.append("</tbody></table>");
               msg.append(MessageFormat.format(i18nMessage.getString("LINE_OF_TOTAL"), i + 1, list.size()));
