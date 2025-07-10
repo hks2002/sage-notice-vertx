@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 14:37:45                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-09 19:36:56                                                                      *
+ * @LastEditDate          : 2025-07-10 14:19:27                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -94,13 +94,16 @@ public class MailService {
       // build email content, multi recipients with ',' not ';'
       MimeMessage message = new MimeMessage(session);
       message.setFrom(new InternetAddress(SENDER));
-      log.debug("To recipients: {}", String.join(",", toSet));
-      log.debug("CC recipients: {}", String.join(",", ccSet));
+
       // TODO If you want to do test, change the TO and CC email address.
-      // message.setRecipients(Message.RecipientType.TO, "r.huang@dedienne-aero.com");
-      message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(String.join(",", toSet)));
+      // String to = "r.huang@dedienne-aero.com";
+      String to = String.join(",", toSet);
+      String cc = String.join(",", ccSet);
+      log.debug("To recipients: {}", to);
+      log.debug("CC recipients: {}", cc);
+      message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
       if (!ccSet.isEmpty()) {
-        message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(String.join(",", ccSet)));
+        message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(cc));
       }
       message.setSubject(subject);
       message.setContent(body, "text/html; charset=UTF-8");

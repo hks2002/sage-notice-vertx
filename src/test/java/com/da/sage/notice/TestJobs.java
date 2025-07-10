@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                             *
  * @CreatedDate           : 2025-05-19 16:13:27                                                                       *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                             *
- * @LastEditDate          : 2025-07-09 19:13:06                                                                       *
+ * @LastEditDate          : 2025-07-10 14:00:39                                                                       *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                           *
  *********************************************************************************************************************/
 
@@ -23,11 +23,22 @@ import lombok.extern.log4j.Log4j2;
 public class TestJobs {
 
   @Test
-  void testJob(Vertx vertx, VertxTestContext testContext) throws Throwable {
+  void testAllJob(Vertx vertx, VertxTestContext testContext) throws Throwable {
     VertxApp.main(new String[] {});
     SchedulerService.runAll();
 
     vertx.setTimer(1000 * 60 * 5, (t) -> {
+      testContext.completeNow();
+    });
+
+  }
+
+  @Test
+  void testJob(Vertx vertx, VertxTestContext testContext) throws Throwable {
+    VertxApp.main(new String[] {});
+    SchedulerService.run("ProjectProfit");
+
+    vertx.setTimer(1000 * 60, (t) -> {
       testContext.completeNow();
     });
 
