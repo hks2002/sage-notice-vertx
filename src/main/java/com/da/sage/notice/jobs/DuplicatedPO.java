@@ -2,16 +2,13 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-09 19:27:27                                                                      *
+ * @LastEditDate          : 2025-07-10 12:08:04                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
 package com.da.sage.notice.jobs;
 
-import java.sql.Date;
-import java.text.DateFormat;
 import java.text.MessageFormat;
-import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -44,8 +41,6 @@ public class DuplicatedPO implements Job {
 
     Locale locale = LocaleUtils.getLocale(language);
     ResourceBundle i18nMessage = ResourceBundle.getBundle("messages", locale);
-    DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, locale);
-    NumberFormat numberFormat = NumberFormat.getInstance(locale);
 
     JsonObject params = new JsonObject();
     params.put("Site", site);
@@ -85,7 +80,7 @@ public class DuplicatedPO implements Job {
               msg.append("<tr><td>")
                   .append(MessageFormat.format(i18nMessage.getString("N_PURCHASE_DATE"), obj.getString("Seq")))
                   .append("</td><td>")
-                  .append(dateFormat.format(new Date(obj.getLong("PurchaseDate"))))
+                  .append(LocaleUtils.getDate(obj.getLong("PurchaseDate"), locale))
                   .append("</td></tr>");
               msg.append("<tr><td>")
                   .append(MessageFormat.format(i18nMessage.getString("N_PURCHASE_PURCHASER"), obj.getString("Seq")))
@@ -95,24 +90,24 @@ public class DuplicatedPO implements Job {
               msg.append("<tr><td>")
                   .append(MessageFormat.format(i18nMessage.getString("N_PURCHASE_QTY"), obj.getString("Seq")))
                   .append("</td><td>")
-                  .append(numberFormat.format(obj.getDouble("PurchaseQty")))
+                  .append(obj.getInteger("PurchaseQty"))
                   .append("</td></tr>");
               msg.append("<tr><td>")
                   .append(MessageFormat.format(i18nMessage.getString("N_PURCHASE_AMOUNT"), obj.getString("Seq")))
                   .append("</td><td>")
-                  .append(numberFormat.format(obj.getDouble("Cost")))
+                  .append(LocaleUtils.getCurrency(obj.getFloat("Cost"), locale))
                   .append(" ")
                   .append(obj.getString("Currency"))
                   .append("</td></tr>");
               msg.append("<tr><td>")
                   .append(i18nMessage.getString("TOTAL_PURCHASE_QTY_BY_PROJECT"))
                   .append("</td><td>")
-                  .append(numberFormat.format(obj.getDouble("TotalPurchaseQty")))
+                  .append(obj.getInteger("TotalPurchaseQty"))
                   .append("</td></tr>");
               msg.append("<tr><td>")
                   .append(i18nMessage.getString("TOTAL_SALES_QTY_BY_PROJECT"))
                   .append("</td><td>")
-                  .append(numberFormat.format(obj.getDouble("TotalSalesQty")))
+                  .append(obj.getInteger("TotalSalesQty"))
                   .append("</td></tr>");
               msg.append("</tbody></table>");
               msg.append(MessageFormat.format(i18nMessage.getString("LINE_OF_TOTAL"), i + 1, list.size()));

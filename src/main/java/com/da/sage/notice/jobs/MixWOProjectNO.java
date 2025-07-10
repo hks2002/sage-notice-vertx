@@ -2,16 +2,13 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-09 19:26:42                                                                      *
+ * @LastEditDate          : 2025-07-10 12:17:36                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
 package com.da.sage.notice.jobs;
 
-import java.sql.Date;
-import java.text.DateFormat;
 import java.text.MessageFormat;
-//import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -44,8 +41,6 @@ public class MixWOProjectNO implements Job {
 
     Locale locale = LocaleUtils.getLocale(language);
     ResourceBundle i18nMessage = ResourceBundle.getBundle("messages", locale);
-    DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, locale);
-    // NumberFormat numberFormat = NumberFormat.getInstance(locale);
 
     JsonObject params = new JsonObject();
     DB.queryByFile("MixWOProjectNO", params)
@@ -82,7 +77,7 @@ public class MixWOProjectNO implements Job {
               msg.append("<tr><td>")
                   .append(i18nMessage.getString("CREATE_DATE"))
                   .append("</td><td>")
-                  .append(dateFormat.format(new Date(obj.getLong("CreateDate"))))
+                  .append(LocaleUtils.getDate(obj.getLong("CreateDate"), locale))
                   .append("</td></tr>");
               msg.append("</tbody></table>");
               msg.append(MessageFormat.format(i18nMessage.getString("LINE_OF_TOTAL"), i + 1, list.size()));

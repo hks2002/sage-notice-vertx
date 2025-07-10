@@ -2,16 +2,13 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-09 19:27:00                                                                      *
+ * @LastEditDate          : 2025-07-10 12:15:58                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
 package com.da.sage.notice.jobs;
 
-import java.sql.Date;
-import java.text.DateFormat;
 import java.text.MessageFormat;
-//import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -45,8 +42,6 @@ public class LongTimeSOAction implements Job {
 
     Locale locale = LocaleUtils.getLocale(language);
     ResourceBundle i18nMessage = ResourceBundle.getBundle("messages", locale);
-    DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, locale);
-    // NumberFormat numberFormat = NumberFormat.getInstance(locale);
 
     JsonObject params = new JsonObject();
     params.put("Site", site);
@@ -102,6 +97,7 @@ public class LongTimeSOAction implements Job {
                   .append(i18nMessage.getString("ORDER_PRICE"))
                   .append("</td><td>")
                   .append(obj.getFloat("OrderPrice"))
+                  .append(LocaleUtils.getCurrency(obj.getFloat("OrderPrice"), locale))
                   .append(" ")
                   .append(obj.getString("OrderCurrency"))
                   .append("</td></tr>");
@@ -128,12 +124,12 @@ public class LongTimeSOAction implements Job {
               msg.append("<tr><td>")
                   .append(i18nMessage.getString("ORDER_DATE"))
                   .append("</td><td>")
-                  .append(dateFormat.format(new Date(obj.getLong("OrderDate"))))
+                  .append(LocaleUtils.getDate(obj.getLong("OrderDate"), locale))
                   .append("</td></tr>");
               msg.append("<tr><td>")
                   .append(i18nMessage.getString("DEMAND_DATE"))
                   .append("</td><td>")
-                  .append(dateFormat.format(new Date(obj.getLong("DemandDate"))))
+                  .append(LocaleUtils.getDate(obj.getLong("DemandDate"), locale))
                   .append("</td></tr>");
               msg.append("<tr><td>")
                   .append(i18nMessage.getString("ORDER_STATUS"))

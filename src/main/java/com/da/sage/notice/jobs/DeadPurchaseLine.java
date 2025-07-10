@@ -2,16 +2,13 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-09 19:27:38                                                                      *
+ * @LastEditDate          : 2025-07-10 12:04:12                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
 package com.da.sage.notice.jobs;
 
-import java.sql.Date;
-import java.text.DateFormat;
 import java.text.MessageFormat;
-//import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -44,8 +41,6 @@ public class DeadPurchaseLine implements Job {
 
     Locale locale = LocaleUtils.getLocale(language);
     ResourceBundle i18nMessage = ResourceBundle.getBundle("messages", locale);
-    DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, locale);
-    // NumberFormat numberFormat = NumberFormat.getInstance(locale);
 
     JsonObject params = new JsonObject();
     params.put("Site", site);
@@ -93,14 +88,14 @@ public class DeadPurchaseLine implements Job {
               msg.append("<tr><td>")
                   .append(i18nMessage.getString("PURCHASE_AMOUNT"))
                   .append("</td><td>")
-                  .append(obj.getFloat("PurchaseAmount"))
+                  .append(LocaleUtils.getCurrency(obj.getFloat("PurchaseAmount"), locale))
                   .append(" ")
                   .append(obj.getString("PurchaseCurrency"))
                   .append("</td></tr>");
               msg.append("<tr><td>")
                   .append(i18nMessage.getString("PURCHASE_DATE"))
                   .append("</td><td>")
-                  .append(dateFormat.format(new Date(obj.getLong("PurchaseDate"))))
+                  .append(LocaleUtils.getDate(obj.getLong("PurchaseDate"), locale))
                   .append("</td></tr>");
               msg.append("<tr><td>")
                   .append(i18nMessage.getString("PURCHASER"))
@@ -125,7 +120,7 @@ public class DeadPurchaseLine implements Job {
               msg.append("<tr><td>")
                   .append(i18nMessage.getString("ORDER_DATE"))
                   .append("</td><td>")
-                  .append(dateFormat.format(new Date(obj.getLong("OrderDate"))))
+                  .append(LocaleUtils.getDate(obj.getLong("OrderDate"), locale))
                   .append("</td></tr>");
               msg.append("</tbody></table>");
               msg.append(MessageFormat.format(i18nMessage.getString("LINE_OF_TOTAL"), i + 1, list.size()));
