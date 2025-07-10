@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-10 12:15:58                                                                      *
+ * @LastEditDate          : 2025-07-10 12:34:14                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -171,6 +171,8 @@ public class LongTimeSOAction implements Job {
 
             if (msg.length() > 0) {
               String msgNotes = """
+                  <hr />
+                  Result only include: 'In progress'
                   <hr />
                   ProjectStatus: 'In hold','In progress','PO Cancelled','Delivered','Customer StandBy';
                   ProjectBlockReason: 'AMENDMENT', 'PAYMENT', 'TECHNICAL DATA', 'DEVIATION REQUEST', 'QUALIFICATION','WAITING TOOL';
