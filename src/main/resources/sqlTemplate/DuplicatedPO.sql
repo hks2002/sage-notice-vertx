@@ -43,17 +43,6 @@
         SELECT DISTINCT
             PORDERP.PJT_0,
             PORDERP.ITMREF_0,
-            RTRIM(PORDERP.ITMDES1_0 +' '+ PORDERP.ITMDES2_0 +' '+ PORDERP.ITMDES3_0) AS Description,
-            PORDERP.POHNUM_0,
-            PORDERP.POPLIN_0,
-            PORDERP.CREDAT_0,
-            PORDERP.CREDATTIM_0,
-            PORDERQ.QTYSTU_0,
-            PORDERQ.LINATIAMT_0,
-            PORDERQ.NETCUR_0,
-            PORDERP.CREUSR_0,
-            AUTILIS.ADDEML_0,
-            DENSE_RANK() OVER (PARTITION BY PORDERP.PJT_0, PORDERP.ITMREF_0 ORDER BY PORDERP.ROWID ) AS SEQ,
             SUM(PORDERQ.QTYSTU_0) OVER (PARTITION BY PORDERP.ITMREF_0, PORDERP.PJT_0 ) AS PQTY,
             SORDERQ.QTYSTU_0 AS SQTY
         FROM  T1
@@ -65,8 +54,6 @@
             AND PORDERP.POPLIN_0 = PORDERQ.POPLIN_0
         INNER JOIN EXPLOIT.SORDERQ SORDERQ
             ON (SORDERQ.YSOH_PJT_0 = T1.PJT_0 OR SORDERQ.YSOQ_PJTORI_0 = T1.PJT_0)
-        LEFT JOIN EXPLOIT.AUTILIS AUTILIS
-            ON AUTILIS.USR_0 = PORDERP.CREUSR_0
         WHERE
             PORDERP.PRHFCY_0 = '#{Site}'
         AND PORDERQ.PRHFCY_0 = '#{Site}'
@@ -77,17 +64,6 @@
         SELECT DISTINCT
             PORDERP.PJT_0,
             PORDERP.ITMREF_0,            
-            RTRIM(PORDERP.ITMDES1_0 +' '+ PORDERP.ITMDES2_0 +' '+ PORDERP.ITMDES3_0) AS Description,
-            PORDERP.POHNUM_0,
-            PORDERP.POPLIN_0,
-            PORDERP.CREDAT_0,
-            PORDERP.CREDATTIM_0,
-            PORDERQ.QTYSTU_0,
-            PORDERQ.LINATIAMT_0,
-            PORDERQ.NETCUR_0,
-            PORDERP.CREUSR_0,
-            AUTILIS.ADDEML_0,
-            DENSE_RANK() OVER (PARTITION BY PORDERP.PJT_0, PORDERP.ITMREF_0 ORDER BY PORDERP.ROWID ) AS SEQ,
             SUM(PORDERQ.QTYSTU_0) OVER (PARTITION BY PORDERP.ITMREF_0, PORDERP.PJT_0 ) AS PQTY,
             SUM(MFGITM.EXTQTY_0) OVER (PARTITION BY MFGITM.PJT_0 ) AS SQTY
         FROM  T1
@@ -107,31 +83,39 @@
             PORDERP.PRHFCY_0 = '#{Site}'
         AND PORDERQ.PRHFCY_0 = '#{Site}'
         AND MFGITM.MFGFCY_0 = '#{Site}'
-        AND MFGITM.ITMSTA_0 !=3                         ---  Only open work order
+        AND MFGITM.ITMSTA_0 !=3                         --- Only open work order
         AND OPPOR.OPPTYP_0 = 'ART'                      --- ProjectNO is Stock Project
         AND PORDERQ.LINCLEFLG_0 != 2                    -- only open purchase order line  1: open, 2: closed
-    )
-
+    ),
+   T4 AS (
     SELECT
         T2.PJT_0 AS ProjectNO,
         T2.ITMREF_0 AS PN,        
-        T2.Description,
-        T2.POHNUM_0 AS PurchaseNO,
-        T2.POPLIN_0 AS PurchaseLine,
-        T2.QTYSTU_0 AS PurchaseQty,
-        T2.LINATIAMT_0 AS Cost,
-        T2.NETCUR_0 AS Currency,
-        T2.CREDAT_0 AS PurchaseDate,
+        RTRIM(PORDERP.ITMDES1_0 +' '+ PORDERP.ITMDES2_0 +' '+ PORDERP.ITMDES3_0) AS Description,
+        PORDERP.POHNUM_0 AS PurchaseNO,
+        PORDERP.POPLIN_0 AS PurchaseLine,
+        PORDERQ.QTYSTU_0 AS PurchaseQty,
+        PORDERQ.LINATIAMT_0 AS Cost,
+        PORDERQ.NETCUR_0 AS Currency,
+        PORDERP.CREDAT_0 AS PurchaseDate,
         T2.PQTY AS TotalPurchaseQty,
         T2.SQTY  AS TotalSalesQty,
-        T2.CREUSR_0 AS Purchaser,
-        T2.ADDEML_0 AS PurchaserEmail,
-        T2.SEQ AS Seq
+        PORDERP.CREUSR_0 AS Purchaser,
+        AUTILIS.ADDEML_0 AS PurchaserEmail,
+        DENSE_RANK() OVER (PARTITION BY PORDERP.PJT_0, PORDERP.ITMREF_0 ORDER BY PORDERP.ROWID ) AS Seq
     FROM
         T2
     INNER JOIN T2 AS T4
-        ON T2.PJT_0 = T4.PJT_0
-           AND T2.ITMREF_0 = T4.ITMREF_0
+    ON T2.PJT_0 = T4.PJT_0
+        AND T2.ITMREF_0 = T4.ITMREF_0           
+    INNER JOIN EXPLOIT.PORDERP AS PORDERP
+        ON T2.PJT_0 = PORDERP.PJT_0
+        AND T2.ITMREF_0 = PORDERP.ITMREF_0
+    INNER JOIN EXPLOIT.PORDERQ AS PORDERQ
+        ON PORDERP.POHNUM_0 = PORDERQ.POHNUM_0
+        AND PORDERP.POPLIN_0 = PORDERQ.POPLIN_0
+    LEFT JOIN EXPLOIT.AUTILIS AUTILIS
+        ON AUTILIS.USR_0 = PORDERP.CREUSR_0
     WHERE
        T2.PQTY > T2.SQTY      -- if total purchase Qty is less sales Qty, batch purchase, ignore it
 
@@ -140,22 +124,33 @@
     SELECT
         T3.PJT_0 AS ProjectNO,
         T3.ITMREF_0 AS PN,        
-        T3.Description,
-        T3.POHNUM_0 AS PurchaseNO,
-        T3.POPLIN_0 AS PurchaseLine,
-        T3.QTYSTU_0 AS PurchaseQty,
-        T3.LINATIAMT_0 AS Cost,
-        T3.NETCUR_0 AS Currency,
-        T3.CREDAT_0 AS PurchaseDate,
+        RTRIM(PORDERP.ITMDES1_0 +' '+ PORDERP.ITMDES2_0 +' '+ PORDERP.ITMDES3_0) AS Description,
+        PORDERP.POHNUM_0 AS PurchaseNO,
+        PORDERP.POPLIN_0 AS PurchaseLine,
+        PORDERQ.QTYSTU_0 AS PurchaseQty,
+        PORDERQ.LINATIAMT_0 AS Cost,
+        PORDERQ.NETCUR_0 AS Currency,
+        PORDERP.CREDAT_0 AS PurchaseDate,
         T3.PQTY AS TotalPurchaseQty,
         T3.SQTY  AS TotalSalesQty,
-        T3.CREUSR_0 AS Purchaser,
-        T3.ADDEML_0 AS PurchaserEmail,
-        T3.SEQ AS Seq
+        PORDERP.CREUSR_0 AS Purchaser,
+        AUTILIS.ADDEML_0 AS PurchaserEmail,
+        DENSE_RANK() OVER (PARTITION BY PORDERP.PJT_0, PORDERP.ITMREF_0 ORDER BY PORDERP.ROWID ) AS Seq
     FROM
         T3
-    INNER JOIN T3 AS T5
+        INNER JOIN T3 AS T5
         ON T3.PJT_0 = T5.PJT_0
-           AND T3.ITMREF_0 = T5.ITMREF_0
+           AND T3.ITMREF_0 = T5.ITMREF_0          
+        INNER JOIN EXPLOIT.PORDERP AS PORDERP
+            ON T3.PJT_0 = PORDERP.PJT_0
+            AND T3.ITMREF_0 = PORDERP.ITMREF_0
+        INNER JOIN EXPLOIT.PORDERQ AS PORDERQ
+            ON PORDERP.POHNUM_0 = PORDERQ.POHNUM_0
+            AND PORDERP.POPLIN_0 = PORDERQ.POPLIN_0
+        LEFT JOIN EXPLOIT.AUTILIS AUTILIS
+            ON AUTILIS.USR_0 = PORDERP.CREUSR_0
     WHERE
        T3.PQTY > T3.SQTY       -- if total purchase Qty is less sales Qty, batch purchase, ignore it
+ )
+ SELECT * FROM T4 
+ ORDER BY Seq ASC
