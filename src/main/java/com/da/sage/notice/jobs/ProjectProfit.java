@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-10 12:23:00                                                                      *
+ * @LastEditDate          : 2025-07-10 14:17:19                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -149,7 +149,6 @@ public class ProjectProfit implements Job {
               msg.append(MessageFormat.format(i18nMessage.getString("LINE_OF_TOTAL"), i + 1, list.size()));
               msg.append("<hr />");
 
-              newMailTo += ";" + obj.getString("PurchaserMail");
             }
 
             log.debug("{} [{}]\n{}", jobName, site, msg.toString());
