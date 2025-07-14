@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 14:37:45                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-10 14:19:27                                                                      *
+ * @LastEditDate          : 2025-07-14 15:37:28                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -96,9 +96,10 @@ public class MailService {
       message.setFrom(new InternetAddress(SENDER));
 
       // TODO If you want to do test, change the TO and CC email address.
-      // String to = "r.huang@dedienne-aero.com";
-      String to = String.join(",", toSet);
-      String cc = String.join(",", ccSet);
+      String to = "r.huang@dedienne-aero.com";
+      String cc = "";
+      // String to = String.join(",", toSet);
+      // String cc = String.join(",", ccSet);
       log.debug("To recipients: {}", to);
       log.debug("CC recipients: {}", cc);
       message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));

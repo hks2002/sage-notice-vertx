@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-03 09:40:32                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-10 11:43:38                                                                      *
+ * @LastEditDate          : 2025-07-14 16:52:37                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -14,7 +14,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class LocaleUtils {
+public class L {
   public static Locale getLocale(String language) {
     if (language == null || language.isEmpty()) {
       return new Locale("en", "US");
