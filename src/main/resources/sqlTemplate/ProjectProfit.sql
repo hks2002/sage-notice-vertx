@@ -7,6 +7,7 @@
     WHERE
       SORDERQ.SALFCY_0 = '#{Site}'
       AND SORDERQ.YSOQ_PJTORI_0 != ''
+      AND RIGHT(SORDERQ.YSOQ_PJTORI_0, 4) != '0001'
       AND SORDERQ.SOQSTA_0 != 3  --- only open sales order
   ),  
   T02 AS (    
