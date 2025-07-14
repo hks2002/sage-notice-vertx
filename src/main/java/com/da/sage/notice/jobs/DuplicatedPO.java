@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-14 18:28:04                                                                      *
+ * @LastEditDate          : 2025-07-14 19:02:21                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -117,7 +117,7 @@ public class DuplicatedPO implements Job {
 
             MailService.sendEmail(
                 "[SageAssistant]" + "[" + site + "]" + i18nMessage.getString(jobName) + ' ' + totalTxt,
-                String.join(" ", projects) + "<hr />" + msg.toString(),
+                String.join(" ", projects) + "<hr />" + msg.toString() + msgNotes,
                 mailTo + moreMailTo,
                 mailCc);
 
