@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-14 18:47:36                                                                      *
+ * @LastEditDate          : 2025-07-16 14:49:13                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -98,27 +98,26 @@ public class ProjectProfit implements Job {
                   .append(TD.N(L.getDate(obj.getLong("OrderDate"), locale)))
                   .append(TD.R(L.getCurrency(obj.getFloat("ProjectSalesPrice"), locale)))
                   .append(TD.N(obj.getString("SalesCurrency")))
-                  .append(TD.N(L.getCurrency(obj.getFloat("ProjectSalesLocalPrice"), locale)))
+                  .append(TD.R(L.getCurrency(obj.getFloat("ProjectSalesLocalPrice"), locale)))
                   .append(TD.N(obj.getString("LocalCurrency")))
-                  .append(TD.N(L.getNumber(obj.getFloat("Rate"), locale)))
-                  .append(TD.N(L.getCurrency(obj.getFloat("ProjectLocalCost"), locale)));
+                  .append(TD.R(L.getNumber(obj.getFloat("Rate"), locale)))
+                  .append(TD.R(L.getCurrency(obj.getFloat("ProjectLocalCost"), locale)));
 
               if (obj.getDouble("Profit") < 0) {
                 msg
                     .append("<td style=\"color: red;\">")
-                    .append(L.getCurrency(obj.getFloat("Profit"), locale))
+                    .append(TD.R(L.getCurrency(obj.getFloat("Profit"), locale)))
                     .append("</td><td style=\"color: red;\">")
-                    .append(L.getNumber(obj.getFloat("ProfitRate"), locale))
+                    .append(TD.R(L.getNumber(obj.getFloat("ProfitRate"), locale)))
                     .append("</td>");
               } else {
                 msg
-                    .append(TD.N(L.getCurrency(obj.getFloat("Profit"), locale)))
-                    .append(TD.N(L.getNumber(obj.getFloat("ProfitRate"), locale)));
+                    .append(TD.R(L.getCurrency(obj.getFloat("Profit"), locale)))
+                    .append(TD.R(L.getNumber(obj.getFloat("ProfitRate"), locale)));
               }
 
               msg.append("</tr>");
 
-              moreMailTo += ";" + obj.getString("CreateUserEmail");
             }
             msg.append("</tbody>")
                 .append("</table>");
