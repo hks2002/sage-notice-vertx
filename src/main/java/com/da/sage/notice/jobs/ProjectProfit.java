@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-16 14:49:13                                                                      *
+ * @LastEditDate          : 2025-07-17 15:19:42                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -105,11 +105,8 @@ public class ProjectProfit implements Job {
 
               if (obj.getDouble("Profit") < 0) {
                 msg
-                    .append("<td style=\"color: red;\">")
-                    .append(TD.R(L.getCurrency(obj.getFloat("Profit"), locale)))
-                    .append("</td><td style=\"color: red;\">")
-                    .append(TD.R(L.getNumber(obj.getFloat("ProfitRate"), locale)))
-                    .append("</td>");
+                    .append(TD.R(L.getCurrency(obj.getFloat("Profit"), locale), "red"))
+                    .append(TD.R(L.getNumber(obj.getFloat("ProfitRate"), locale), "red"));
               } else {
                 msg
                     .append(TD.R(L.getCurrency(obj.getFloat("Profit"), locale)))
