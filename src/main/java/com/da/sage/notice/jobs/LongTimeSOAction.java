@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-14 18:28:39                                                                      *
+ * @LastEditDate          : 2025-07-17 10:03:40                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -133,7 +133,8 @@ public class LongTimeSOAction implements Job {
                 ProjectBlockReason: 'AMENDMENT', 'PAYMENT', 'TECHNICAL DATA', 'DEVIATION REQUEST', 'QUALIFICATION','WAITING TOOL';
                 """;
             MailService.sendEmail(
-                "[SageAssistant]" + "[" + site + "]" + i18nMessage.getString(jobName) + ' ' + totalTxt,
+                "[SageAssistant]" + "[" + site + "]" +
+                    MessageFormat.format(i18nMessage.getString(jobName), days) + ' ' + totalTxt,
                 String.join(" ", projects) + "<hr />" + msg.toString() + msgNotes,
                 mailTo + moreMailTo,
                 mailCc);
