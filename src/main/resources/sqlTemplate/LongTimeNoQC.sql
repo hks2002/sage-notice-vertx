@@ -1,0 +1,59 @@
+  WITH T0 AS (  -- find open project
+    SELECT DISTINCT
+        SORDERQ.YSOH_PJT_0 AS ProjectNO,
+        SORDERQ.YSOQ_PJTORI_0 AS ProjectOriNO
+    FROM EXPLOIT.SORDERQ AS SORDERQ
+      WHERE SORDERQ.SALFCY_0 =  #{Site}
+        AND SORDERQ.SOQSTA_0 != 3
+    ),
+    T1 AS (   -- find open porject receive
+      SELECT
+        PRECEIPTD.PJT_0,
+        PRECEIPTD.CREDAT_0,
+        PRECEIPTD.CREUSR_0
+      FROM
+      T0 INNER JOIN EXPLOIT.PRECEIPTD PRECEIPTD
+      ON ( T0.ProjectNO = PRECEIPTD.PJT_0 OR T0.ProjectOriNO = PRECEIPTD.PJT_0 )
+          AND PRECEIPTD.PJT_0 != ''
+          AND PRECEIPTD.ITMREF_0 LIKE 'PNOG%'
+      AND PRECEIPTD.PRHFCY_0 =  #{Site}
+    ),
+    T2 AS (
+    SELECT DISTINCT
+        PORDERP.POHNUM_0 AS PurchaseNO,
+        PORDERP.POPLIN_0 AS Line,
+        PORDERP.PJT_0 AS ProjectNO,
+        PORDERP.ITMREF_0 AS PN,
+        PORDERP.ITMDES_0 AS Description,
+        PORDER.CUR_0 AS Currency,
+        PORDERP.NETPRI_0 AS NetPrice,
+        PORDERQ.QTYPUU_0 AS QTY,
+        PORDERQ.PUU_0 AS Unit,
+        PORDER.BPSNUM_0 AS VendorCode,
+        PORDER.BPRNAM_0 AS VendorName,
+        PORDER.ORDDAT_0 AS OrderDate,
+        PORDER.CREUSR_0 AS CreateUser,
+        T1.CREDAT_0 AS ReceiptDate,
+        T1.CREUSR_0 AS Receiptor
+      FROM  T1
+          INNER JOIN EXPLOIT.PORDERP AS PORDERP
+              ON T1.PJT_0 = PORDERP.PJT_0
+      INNER JOIN EXPLOIT.PORDERQ AS PORDERQ
+        ON PORDERP.POHNUM_0=PORDERQ.POHNUM_0
+          AND PORDERP.POPLIN_0=PORDERQ.POPLIN_0
+          AND PORDERQ.PRHFCY_0 =  #{Site}
+          AND PORDERP.PRHFCY_0 =  #{Site}
+      INNER JOIN EXPLOIT.PORDER AS PORDER
+        ON PORDERP.POHNUM_0 = PORDER.POHNUM_0
+          AND PORDER.POHFCY_0 =  #{Site}
+      LEFT JOIN EXPLOIT.SERREQUEST SERREQUEST
+              ON T1.PJT_0 = SERREQUEST.YORIPJT_0
+          WHERE
+              PORDERP.ITMREF_0 LIKE 'PNOG%'
+            AND SERREQUEST.YORIPJT_0 IS NULL
+            AND T1.CREDAT_0 &gt;=  DATEADD(DAY, #{DiffDaysStart}, GETDATE())
+            AND T1.CREDAT_0 &lt;  DATEADD(DAY, #{DiffDaysEnd}, GETDATE())
+    )
+
+  SELECT DISTINCT * FROM T2
+  ORDER BY T2.ReceiptDate ASC
