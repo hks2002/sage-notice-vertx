@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-17 15:19:42                                                                      *
+ * @LastEditDate          : 2025-08-07 17:34:17                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -71,12 +71,16 @@ public class ProjectProfit implements Job {
                 .append(TH.N(i18nMessage.getString("DESCRIPTION")))
                 .append(TH.N(i18nMessage.getString("QTY")))
                 .append(TH.N(i18nMessage.getString("ORDER_DATE")))
-                .append(TH.N(i18nMessage.getString("PROJECT_SALES_PRICE")))
+                .append(TH.N(i18nMessage.getString("NET_PRICE")))
+                .append(TH.N(i18nMessage.getString("NET_PRICE_WITH_TAX")))
+                .append(TH.N(i18nMessage.getString("SALES_AMOUNT")))
+                .append(TH.N(i18nMessage.getString("SALES_AMOUNT_WITH_TAX")))
+                .append(TH.N(i18nMessage.getString("SALES_LOCAL_AMOUNT")))
+                .append(TH.N(i18nMessage.getString("SALES_LOCAL_AMOUNT_WITH_TAX")))
                 .append(TH.N(i18nMessage.getString("CURRENCY")))
-                .append(TH.N(i18nMessage.getString("PROJECT_SALES_LOCAL_PRICE")))
-                .append(TH.N(i18nMessage.getString("CURRENCY")))
+                .append(TH.N(i18nMessage.getString("LOCAL_CURRENCY")))
                 .append(TH.N(i18nMessage.getString("CURRENCY_RATE")))
-                .append(TH.N(i18nMessage.getString("PROJECT_LOCAL_COST")))
+                .append(TH.N(i18nMessage.getString("PURCHASE_LOCAL_AMOUNT_WITH_TAX")))
                 .append(TH.N(i18nMessage.getString("PROJECT_PROFIT")))
                 .append(TH.N(i18nMessage.getString("PROJECT_PROFIT_RATE")))
                 .append("</tr>")
@@ -96,12 +100,16 @@ public class ProjectProfit implements Job {
                   .append(TD.N(obj.getString("Description")))
                   .append(TD.C(obj.getInteger("QTY")))
                   .append(TD.N(L.getDate(obj.getLong("OrderDate"), locale)))
-                  .append(TD.R(L.getCurrency(obj.getFloat("ProjectSalesPrice"), locale)))
-                  .append(TD.N(obj.getString("SalesCurrency")))
-                  .append(TD.R(L.getCurrency(obj.getFloat("ProjectSalesLocalPrice"), locale)))
+                  .append(TD.R(L.getCurrency(obj.getFloat("NetPrice"), locale)))
+                  .append(TD.R(L.getCurrency(obj.getFloat("NetPriceWithTax"), locale)))
+                  .append(TD.R(L.getCurrency(obj.getFloat("SalesAmount"), locale)))
+                  .append(TD.R(L.getCurrency(obj.getFloat("SalesAmountWithTax"), locale)))
+                  .append(TD.R(L.getCurrency(obj.getFloat("SalesLocalAmount"), locale)))
+                  .append(TD.R(L.getCurrency(obj.getFloat("SalesLocalAmountWithTax"), locale)))
+                  .append(TD.N(obj.getString("Currency")))
                   .append(TD.N(obj.getString("LocalCurrency")))
                   .append(TD.R(L.getNumber(obj.getFloat("Rate"), locale)))
-                  .append(TD.R(L.getCurrency(obj.getFloat("ProjectLocalCost"), locale)));
+                  .append(TD.R(L.getCurrency(obj.getFloat("PurchaseLocalAmountWithTax"), locale)));
 
               if (obj.getDouble("Profit") < 0) {
                 msg

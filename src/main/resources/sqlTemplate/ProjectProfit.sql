@@ -19,7 +19,7 @@
       SORDERQ.SALFCY_0 = '#{Site}'
       AND SORDERQ.SOQSTA_0 != 3  --- only open sales order
   ),
-  T03 AS (
+  T00 AS (
    SELECT 
      T01.PJT_0
    FROM T01    
@@ -28,23 +28,24 @@
     T02.PJT_0
    FROM T02
   ),
-  T00 AS (
-    SELECT DISTINCT
-      T03.PJT_0
-    FROM
-      T03
-  ),
   T0 AS ( ---- Project sales line price include tax
     SELECT DISTINCT
       IIF(SORDERQ.YSOQ_PJTORI_0 = '', SORDERQ.YSOH_PJT_0, SORDERQ.YSOQ_PJTORI_0) AS ProjectNO,
-      SORDERQ.SOHNUM_0,
-      SORDERP.ITMREF_0,
+      SORDERQ.SOHNUM_0 AS OrderNO,
+      SORDERP.ITMREF_0 AS PN,
       RTRIM(SORDERP.ITMDES1_0 +' '+ SORDERP.ITMDES2_0 +' '+ SORDERP.ITMDES3_0) AS Description,
-      SORDERP.TSICOD_1,
-      SORDERQ.QTY_0,
-      SORDERP.NETPRIATI_0,
-      SORDERP.NETPRIATI_0 * SORDERQ.QTY_0 AS ProjectSalesPrice,
-      SORDERP.CREDAT_0
+      SORDERP.TSICOD_1 AS ProductFamily,
+      SORDERP.CREDAT_0 AS OrderDate,
+      SORDERQ.QTY_0 AS QTY,
+	  SORDERP.NETPRI_0 AS NetPrice,
+      SORDERP.NETPRIATI_0 AS NetPriceWithTax,
+      SORDERP.NETPRI_0 * SORDERQ.QTY_0 AS SalesAmount,
+      SORDERP.NETPRIATI_0 * SORDERQ.QTY_0 AS SalesAmountWithTax,
+	  IIF(SORDER.ORDNOT_0 = 0, 0, SORDERP.NETPRI_0    * SORDERQ.QTY_0 * SORDER.ORDNOTL_0 / SORDER.ORDNOT_0) AS SalesLocalAmount,
+	  IIF(SORDER.ORDATI_0 = 0, 0, SORDERP.NETPRIATI_0 * SORDERQ.QTY_0 * SORDER.ORDATIL_0 / SORDER.ORDATI_0) AS SalesLocalAmountWithTax,
+	  SORDER.CUR_0 AS Currency,
+	  COMPANY.ACCCUR_0 AS LocalCurrency,
+	  SORDER.CHGRAT_0 AS Rate
     FROM T00
       INNER JOIN EXPLOIT.SORDERQ SORDERQ
         ON (T00.PJT_0 = SORDERQ.YSOH_PJT_0 OR T00.PJT_0 = SORDERQ.YSOQ_PJTORI_0)
@@ -54,57 +55,44 @@
       AND SORDERQ.SALFCY_0 = '#{Site}'
       AND SORDERP.SALFCY_0 = '#{Site}'
       AND SORDERP.NETPRIATI_0 > 0
+	INNER JOIN EXPLOIT.SORDER SORDER
+        ON SORDER.SOHNUM_0 = SORDERQ.SOHNUM_0		 
+    INNER JOIN EXPLOIT.COMPANY COMPANY
+        ON COMPANY.MAIFCY_0 = SORDER.SALFCY_0 
   ),
   T1 AS (
-    SELECT
-      T0.ProjectNO,
-      T0.SOHNUM_0 AS OrderNO,
-      T0.TSICOD_1 AS ProductFamily,
-      T0.ITMREF_0 AS PN,
-      T0.Description,
-      T0.QTY_0 AS QTY,
-      T0.CREDAT_0 AS OrderDate,
-      SORDER.CUR_0 AS SalesCurrency,
-      SORDER.CHGRAT_0 AS Rate,
-      T0.ProjectSalesPrice,
-      T0.ProjectSalesPrice * ( SORDER.ORDINVATIL_0 / SORDER.ORDINVATI_0) AS ProjectSalesLocalPrice
-    FROM
-      T0
-    INNER JOIN EXPLOIT.SORDER SORDER
-        ON T0.SOHNUM_0 = SORDER.SOHNUM_0
-  ),
-  T2 AS (
     SELECT DISTINCT
           PORDERP.PJT_0,
           PORDERQ.CPRCUR_0 AS LocalCurrency,
           -- exclude HKG --> ZHU,YSH, set a low cost
           IIF(PORDERQ.PRHFCY_0 = 'HKG' AND (PORDERQ.BPSNUM_0 = '00871' OR PORDERQ.BPSNUM_0 = '03167' ), 
               1,
-              Sum(PORDERQ.LINAMTCPR_0 + PORDERQ.AMTTAXLIN1_0 + PORDERQ.AMTTAXLIN2_0 + PORDERQ.AMTTAXLIN3_0) OVER (PARTITION BY PORDERP.PJT_0)
-             ) AS ProjectLocalCost
+              Sum(IIF(PORDERQ.LINAMT_0=0, 0, PORDERQ.LINAMTCPR_0 * ( PORDERQ.LINATIAMT_0 / PORDERQ.LINAMT_0))) OVER (PARTITION BY PORDERP.PJT_0)
+             ) AS PurchaseLocalAmountWithTax
     FROM T00
       INNER JOIN EXPLOIT.PORDERP AS PORDERP
           ON T00.PJT_0 = PORDERP.PJT_0
-    INNER JOIN EXPLOIT.PORDERQ AS PORDERQ
+      INNER JOIN EXPLOIT.PORDERQ AS PORDERQ
           ON PORDERP.POHNUM_0 = PORDERQ.POHNUM_0
         AND PORDERP.POPLIN_0 = PORDERQ.POPLIN_0
     WHERE
       PORDERQ.PRHFCY_0 = '#{Site}'
       AND PORDERP.PRHFCY_0 = '#{Site}'
+  ),
+  T2 AS (
+    SELECT
+      T0.*,
+      T1.PurchaseLocalAmountWithTax,
+      T0.SalesLocalAmountWithTax - T1.PurchaseLocalAmountWithTax AS Profit,
+      T0.SalesLocalAmountWithTax / NULLIF(T1.PurchaseLocalAmountWithTax, 0) AS ProfitRate
+    FROM T0
+    LEFT JOIN T1 ON T0.ProjectNO = T1.PJT_0
   )
 
-  SELECT
-    T1.*,
-    T2.LocalCurrency,
-    T2.ProjectLocalCost,
-    T1.ProjectSalesLocalPrice - T2.ProjectLocalCost AS Profit,
-    T1.ProjectSalesLocalPrice / T2.ProjectLocalCost AS ProfitRate
+ SELECT
+    T2.*
   FROM
-    T1
-  LEFT JOIN T2 ON T1.ProjectNO = T2.PJT_0
-  WHERE
-    T1.ProjectSalesLocalPrice / T2.ProjectLocalCost < #{ProfitRate}
-  ORDER BY
-    ProfitRate ASC,
-    Profit ASC,
-    T1.OrderDate DESC
+    T2
+ WHERE ProfitRate < #{ProfitRate}
+ ORDER BY Profit ASC, ProfitRate ASC, OrderDate DESC
+
