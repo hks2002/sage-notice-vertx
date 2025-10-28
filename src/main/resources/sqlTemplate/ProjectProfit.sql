@@ -10,7 +10,7 @@
       AND RIGHT(SORDERQ.YSOQ_PJTORI_0, 4) != '0001'
       AND SORDERQ.SOQSTA_0 != 3  --- only open sales order
   ),  
-  T02 AS (    
+  T02 AS (
     SELECT DISTINCT
       SORDERQ.YSOH_PJT_0  AS PJT_0
     FROM
@@ -22,8 +22,8 @@
   T00 AS (
    SELECT 
      T01.PJT_0
-   FROM T01    
-   UNION    
+   FROM T01
+   UNION
    SELECT 
     T02.PJT_0
    FROM T02

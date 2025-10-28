@@ -82,7 +82,7 @@
         T2.ADDEML_0 AS PurchaserEmail,
         T2.CREDAT_0 AS PurchaseDate,
         T2.CREUSR_0 AS Purchaser,
-		    T3.ProjectNO,
+        T3.ProjectNO,
         T3.OrderNO,
         T3.PN AS SalesPN,
         T3.Qty AS SalesQty,
@@ -91,4 +91,5 @@
         T2
     INNER JOIN T3 ON T2.PJT_0 = T3.ProjectNO
     ORDER BY
+        T2.CREUSR_0 ASC,
         T3.OrderDate ASC

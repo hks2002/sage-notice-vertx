@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-05-19 16:13:27                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-14 18:03:26                                                                      *
+ * @LastEditDate          : 2025-10-28 18:15:19                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -24,7 +24,7 @@ public class TestJobs {
   @Test
   void testJob(Vertx vertx, VertxTestContext testContext) throws Throwable {
     VertxApp.main(new String[] {});
-    SchedulerService.run("ProjectProfit");
+    SchedulerService.run("LongTimeNoReceive");
 
     vertx.setTimer(1000 * 60, (t) -> {
       testContext.completeNow();
