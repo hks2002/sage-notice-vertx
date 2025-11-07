@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# 1. get all i18nMessage.getString("KEY") keys from Java files
-grep -rhoP 'i18nMessage\.getString\(\s*"\K[^"]+' . --include=*.java | sort | uniq > all_keys.txt
+# 1. get all i18n.getString("KEY") keys from Java files
+grep -rhoP 'i18n\.getString\(\s*"\K[^"]+' . --include=*.java | sort | uniq > all_keys.txt
 grep -rhoP 'String\s+jobName\s*=\s*"\K[^"]+' . --include=*.java >> all_keys.txt
 
 # 2. get all properties keys
-grep -oP '^[^#!=\s]+' src/main/resources/messages_zh_CN.properties | sort | uniq > zh_keys.txt
-grep -oP '^[^#!=\s]+' src/main/resources/messages_en_US.properties | sort | uniq > en_keys.txt
+grep -oP '^[^#!=\s]+' src/main/resources/i18n_zh_CN.properties | sort | uniq > zh_keys.txt
+grep -oP '^[^#!=\s]+' src/main/resources/i18n_en_US.properties | sort | uniq > en_keys.txt
 
 # 3. check keys
 echo "Missing zh keys:"
