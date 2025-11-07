@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-14 18:30:44                                                                      *
+ * @LastEditDate          : 2025-11-07 09:55:43                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -80,7 +80,7 @@ public class WrongPOProjectNO implements Job {
 
               msg.append("<tr>")
                   .append(TD.N((i + 1)))
-                  .append(TD.N(obj.getInteger("PurchaseNO")))
+                  .append(TD.N(obj.getString("PurchaseNO")))
                   .append(TD.N(obj.getString("PurchaseNO")))
                   .append(TD.N(obj.getString("ProjectNO")))
                   .append(TD.N(obj.getString("PN")))

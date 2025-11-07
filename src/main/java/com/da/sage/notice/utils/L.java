@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-03 09:40:32                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-14 16:52:37                                                                      *
+ * @LastEditDate          : 2025-11-07 09:25:27                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -12,6 +12,7 @@ import java.sql.Date;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class L {
@@ -35,7 +36,8 @@ public class L {
   }
 
   public static String getDate(Long date, Locale locale) {
-    DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, locale);
+    // DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, locale);
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     return dateFormat.format(new Date(date));
   }
 
