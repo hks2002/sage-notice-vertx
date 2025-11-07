@@ -2,14 +2,14 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 17:08:05                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-10 13:55:48                                                                      *
+ * @LastEditDate          : 2025-11-07 12:31:25                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
 package com.da.sage.notice.service;
 
+import java.util.Date;
 import java.util.Set;
-import java.util.UUID;
 
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
@@ -24,6 +24,7 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.GroupMatcher;
 
 import com.da.sage.notice.utils.PackageUtils;
+import com.da.sage.notice.utils.ScheduleViewer;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
@@ -41,8 +42,8 @@ public class SchedulerService {
       scheduler = StdSchedulerFactory.getDefaultScheduler();
       scheduler.start();
 
-      var list = PackageUtils.getClassesInJarPackage("com.da.sage.notice.jobs");
-      for (Class<?> jobClass : list) {
+      var jobList = PackageUtils.getClassesInJarPackage("com.da.sage.notice.jobs");
+      for (Class<?> jobClass : jobList) {
         String jobName = jobClass.getSimpleName();
 
         // Skip if the class is not configured in notices
@@ -69,23 +70,27 @@ public class SchedulerService {
           }
 
           log.info("Job {} [{}] config: \n{}", jobName, site, config.encodePrettily());
-          JobDataMap jobDataMap = new JobDataMap();
-          jobDataMap.putAll(config.getMap());
+          JobDataMap jobData = new JobDataMap();
+          jobData.putAll(config.getMap());
 
-          String uuid = UUID.randomUUID().toString();
+          // String uuid = UUID.randomUUID().toString();
           @SuppressWarnings("unchecked")
           JobDetail job = JobBuilder.newJob((Class<? extends org.quartz.Job>) jobClass)
-              .withIdentity(jobName + '-' + site + '-' + uuid, "SageNotice")
-              .usingJobData(jobDataMap) // Example job data, can be customized
+              .withIdentity(jobName + '-' + site, "SageNotice")
+              .usingJobData(jobData) // Example job data, can be customized
               .build();
 
           Trigger trigger = TriggerBuilder.newTrigger()
-              .withIdentity(jobName + '-' + site + '-' + uuid + '-' + "Trigger", "SageNotice")
+              .withIdentity(jobName + '-' + site, "SageNotice")
               .withSchedule(CronScheduleBuilder.cronSchedule(cron))
               .build();
           scheduler.scheduleJob(job, trigger);
         }
 
+        Date startTime = new Date();
+        Date endTime = new Date(startTime.getTime() + 24 * 60 * 60 * 1000 * 7); // Next 7 days
+        ScheduleViewer viewer = new ScheduleViewer(scheduler);
+        viewer.displayTriggersInRange(startTime, endTime);
       }
     } catch (SchedulerException e) {
       log.error("Error starting scheduler {}", e.getMessage());

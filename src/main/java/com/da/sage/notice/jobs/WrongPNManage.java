@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-11-06 15:30:54                                                                      *
+ * @LastEditDate          : 2025-11-07 14:18:59                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -10,17 +10,13 @@ package com.da.sage.notice.jobs;
 
 import java.text.MessageFormat;
 import java.util.HashSet;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.ResourceBundle;
 import java.util.Set;
 
-import org.quartz.Job;
-import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import com.da.sage.notice.db.DB;
+import com.da.sage.notice.jobs.base.BaseJob;
 import com.da.sage.notice.service.MailService;
 import com.da.sage.notice.utils.L;
 import com.da.sage.notice.utils.TD;
@@ -30,31 +26,18 @@ import io.vertx.core.json.JsonObject;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class WrongPNManage implements Job {
+public class WrongPNManage extends BaseJob {
   @Override
-  public void execute(JobExecutionContext context) throws JobExecutionException {
-    String jobName = "WRONG_PN_MANAGE";
+  public void executeJob(JobExecutionContext context) throws JobExecutionException {
+    jobName = "WRONG_PN_MANAGE";
 
-    // Retrieve job parameters
-    JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-    log.debug("Executing job {} with data: {}", jobName, jobDataMap);
-    String site = Optional.ofNullable(jobDataMap.getString("site")).orElse("---");
-    String language = Optional.ofNullable(jobDataMap.getString("language")).orElse("en_US");
-    String mailTo = Optional.ofNullable(jobDataMap.getString("mailTo")).orElse("");
-    String mailCc = Optional.ofNullable(jobDataMap.getString("mailCc")).orElse("");
-
-    Locale locale = L.getLocale(language);
-    ResourceBundle i18nMessage = ResourceBundle.getBundle("messages", locale);
-
-    JsonObject params = new JsonObject();
-    params.put("Site", site);
-    DB.queryByFile("WrongPNManage", params)
+    DB.queryByFile(this.getClass().getSimpleName(), params)
         .onSuccess(list -> {
           if (list.isEmpty()) {
             log.info("No wrong PN manage found for site: {}", site);
           } else {
             StringBuilder msg = new StringBuilder();
-            String totalTxt = MessageFormat.format(i18nMessage.getString("TOTAL_LINE"), list.size());
+            String totalTxt = MessageFormat.format(i18n.getString("TOTAL_LINE"), list.size());
             Set<String> PNs = new HashSet<>();
             String moreMailTo = "";
 
@@ -62,17 +45,17 @@ public class WrongPNManage implements Job {
                 .append("<thead>")
                 .append("<tr>")
                 .append("<th>#</th>")
-                .append(TH.N(i18nMessage.getString("ORDER_NO")))
-                .append(TH.N(i18nMessage.getString("LINE")))
-                .append(TH.N(i18nMessage.getString("PROJECT_NO")))
-                .append(TH.N(i18nMessage.getString("CATEGORY")))
-                .append(TH.N(i18nMessage.getString("PN")))
-                .append(TH.N(i18nMessage.getString("DESCRIPTION")))
-                .append(TH.N(i18nMessage.getString("LOT_MANAGE")))
-                .append(TH.N(i18nMessage.getString("SERIAL_MANAGE")))
-                .append(TH.N(i18nMessage.getString("STOCK_MANAGE")))
-                .append(TH.N(i18nMessage.getString("UPDATE_USER")))
-                .append(TH.N(i18nMessage.getString("UPDATE_DATE")))
+                .append(TH.N(i18n.getString("ORDER_NO")))
+                .append(TH.N(i18n.getString("LINE")))
+                .append(TH.N(i18n.getString("PROJECT_NO")))
+                .append(TH.N(i18n.getString("CATEGORY")))
+                .append(TH.N(i18n.getString("PN")))
+                .append(TH.N(i18n.getString("DESCRIPTION")))
+                .append(TH.N(i18n.getString("LOT_MANAGE")))
+                .append(TH.N(i18n.getString("SERIAL_MANAGE")))
+                .append(TH.N(i18n.getString("STOCK_MANAGE")))
+                .append(TH.N(i18n.getString("UPDATE_USER")))
+                .append(TH.N(i18n.getString("UPDATE_DATE")))
                 .append("</tr>")
                 .append("</thead>");
 
@@ -105,7 +88,7 @@ public class WrongPNManage implements Job {
             log.debug("{} [{}]\n{}", jobName, site, msg.toString());
 
             MailService.sendEmail(
-                "[SageAssistant]" + "[" + site + "]" + i18nMessage.getString(jobName) + ' ' + totalTxt,
+                "[SageAssistant]" + "[" + site + "]" + i18n.getString(jobName) + ' ' + totalTxt,
                 String.join(" ", PNs) + "<hr />" + msg.toString(),
                 mailTo + moreMailTo,
                 mailCc);

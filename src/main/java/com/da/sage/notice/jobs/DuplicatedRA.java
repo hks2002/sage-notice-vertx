@@ -2,7 +2,7 @@
  * @Author                : Robert Huang<56649783@qq.com>                                                            *
  * @CreatedDate           : 2025-07-02 15:18:33                                                                      *
  * @LastEditors           : Robert Huang<56649783@qq.com>                                                            *
- * @LastEditDate          : 2025-07-14 18:28:20                                                                      *
+ * @LastEditDate          : 2025-11-07 14:09:55                                                                      *
  * @CopyRight             : Dedienne Aerospace China ZhuHai                                                          *
  ********************************************************************************************************************/
 
@@ -10,17 +10,13 @@ package com.da.sage.notice.jobs;
 
 import java.text.MessageFormat;
 import java.util.HashSet;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.ResourceBundle;
 import java.util.Set;
 
-import org.quartz.Job;
-import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import com.da.sage.notice.db.DB;
+import com.da.sage.notice.jobs.base.BaseJob;
 import com.da.sage.notice.service.MailService;
 import com.da.sage.notice.utils.L;
 import com.da.sage.notice.utils.TD;
@@ -30,31 +26,18 @@ import io.vertx.core.json.JsonObject;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class DuplicatedRA implements Job {
+public class DuplicatedRA extends BaseJob {
   @Override
-  public void execute(JobExecutionContext context) throws JobExecutionException {
-    String jobName = "DUPLICATE_PURCHASE_RECEIPT";
+  public void executeJob(JobExecutionContext context) throws JobExecutionException {
+    jobName = "DUPLICATE_PURCHASE_RECEIPT";
 
-    // Retrieve job parameters
-    JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-    log.debug("Executing job {} with data: {}", jobName, jobDataMap);
-    String site = Optional.ofNullable(jobDataMap.getString("site")).orElse("---");
-    String language = Optional.ofNullable(jobDataMap.getString("language")).orElse("en_US");
-    String mailTo = Optional.ofNullable(jobDataMap.getString("mailTo")).orElse("");
-    String mailCc = Optional.ofNullable(jobDataMap.getString("mailCc")).orElse("");
-
-    Locale locale = L.getLocale(language);
-    ResourceBundle i18nMessage = ResourceBundle.getBundle("messages", locale);
-
-    JsonObject params = new JsonObject();
-    params.put("Site", site);
-    DB.queryByFile("DuplicatedRA", params)
+    DB.queryByFile(this.getClass().getSimpleName(), params)
         .onSuccess(list -> {
           if (list.isEmpty()) {
             log.info("No duplicated RAs found for site: {}", site);
           } else {
             StringBuilder msg = new StringBuilder();
-            String totalTxt = MessageFormat.format(i18nMessage.getString("TOTAL_LINE"), list.size());
+            String totalTxt = MessageFormat.format(i18n.getString("TOTAL_LINE"), list.size());
             Set<String> projects = new HashSet<>();
             String moreMailTo = "";
 
@@ -62,24 +45,24 @@ public class DuplicatedRA implements Job {
                 .append("<thead>")
                 .append("<tr>")
                 .append("<th>#</th>")
-                .append(TH.N(i18nMessage.getString("PROJECT_NO")))
-                .append(TH.N(i18nMessage.getString("N_TIMES")))
-                .append(TH.N(i18nMessage.getString("PN")))
-                .append(TH.N(i18nMessage.getString("DESCRIPTION")))
-                .append(TH.N(i18nMessage.getString("RECEIPT_NO")))
-                .append(TH.N(i18nMessage.getString("RECEIPT_LINE")))
-                .append(TH.N(i18nMessage.getString("RECEIPT_DATE")))
-                .append(TH.N(i18nMessage.getString("RECEIPT_RECEIPTOR")))
-                .append(TH.N(i18nMessage.getString("RECEIPT_QTY")))
-                .append(TH.N(i18nMessage.getString("RECEIPT_AMOUNT")))
-                .append(TH.N(i18nMessage.getString("CURRENCY")))
-                .append(TH.N(i18nMessage.getString("PURCHASE_NO")))
-                .append(TH.N(i18nMessage.getString("PURCHASE_LINE")))
-                .append(TH.N(i18nMessage.getString("PURCHASE_DATE")))
-                .append(TH.N(i18nMessage.getString("PURCHASE_PURCHASER")))
-                .append(TH.N(i18nMessage.getString("TOTAL_RECEIPT_QTY_BY_PROJECT")))
-                .append(TH.N(i18nMessage.getString("TOTAL_PURCHASE_QTY_BY_PROJECT")))
-                .append(TH.N(i18nMessage.getString("TOTAL_SALES_QTY_BY_PROJECT")))
+                .append(TH.N(i18n.getString("PROJECT_NO")))
+                .append(TH.N(i18n.getString("N_TIMES")))
+                .append(TH.N(i18n.getString("PN")))
+                .append(TH.N(i18n.getString("DESCRIPTION")))
+                .append(TH.N(i18n.getString("RECEIPT_NO")))
+                .append(TH.N(i18n.getString("RECEIPT_LINE")))
+                .append(TH.N(i18n.getString("RECEIPT_DATE")))
+                .append(TH.N(i18n.getString("RECEIPT_RECEIPTOR")))
+                .append(TH.N(i18n.getString("RECEIPT_QTY")))
+                .append(TH.N(i18n.getString("RECEIPT_AMOUNT")))
+                .append(TH.N(i18n.getString("CURRENCY")))
+                .append(TH.N(i18n.getString("PURCHASE_NO")))
+                .append(TH.N(i18n.getString("PURCHASE_LINE")))
+                .append(TH.N(i18n.getString("PURCHASE_DATE")))
+                .append(TH.N(i18n.getString("PURCHASE_PURCHASER")))
+                .append(TH.N(i18n.getString("TOTAL_RECEIPT_QTY_BY_PROJECT")))
+                .append(TH.N(i18n.getString("TOTAL_PURCHASE_QTY_BY_PROJECT")))
+                .append(TH.N(i18n.getString("TOTAL_SALES_QTY_BY_PROJECT")))
                 .append("</tr>")
                 .append("</thead>");
 
@@ -117,12 +100,12 @@ public class DuplicatedRA implements Job {
                 .append("</table>");
 
             msg.append("<hr />");
-            msg.append(i18nMessage.getString("HOW_TO_DISABLE_DUPLICATE_RECEIPT_NOTICE"));
+            msg.append(i18n.getString("HOW_TO_DISABLE_DUPLICATE_RECEIPT_NOTICE"));
 
             log.debug("{} [{}]\n{}", jobName, site, msg.toString());
 
             MailService.sendEmail(
-                "[SageAssistant]" + "[" + site + "]" + i18nMessage.getString(jobName) + ' ' + totalTxt,
+                "[SageAssistant]" + "[" + site + "]" + i18n.getString(jobName) + ' ' + totalTxt,
                 String.join(" ", projects) + "<hr />" + msg.toString(),
                 mailTo + moreMailTo,
                 mailCc);
