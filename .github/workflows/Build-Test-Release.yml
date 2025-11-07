@@ -41,5 +41,7 @@ jobs:
                   release-type: maven
                   #package-name: release-please-action
                   token: ${{ secrets.GITHUB_TOKEN }}
+                  bump-minor-pre-major: true
+                  bump-patch-for-minor-pre-major: true
                   extra-files: |
                     CHANGELOG.md
