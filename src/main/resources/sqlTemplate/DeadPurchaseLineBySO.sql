@@ -24,6 +24,11 @@
             AND PORDERQ.LINCLEFLG_0 = 1 --- line open flag, exclude manual closed(value=2) po line
             AND PORDERP.NETPRI_0 > 0 --- exclude manually mark 0, it's an error line
             AND SUBSTRING(PORDERP.POHNUM_0, 2, 2) != 'CT' --- exclude delivery
+            ---FACHDIV0001:   PURCHASE VARIOUS
+            ---FACHTRADRTD:   INBOUND CUSTOM FEES
+            ---FVENTRAAUT:    OUTBOUND SHIPMENT FEES
+            ---FACHTRAAUT:    INBOUND SHIPMENT FEES
+            AND PORDERP.ITMREF_0 NOT IN ('FACHDIV0001', 'FACHTRADRTD', 'FVENTRAAUT', 'FACHTRAAUT')
     ),
     T1 AS (
         SELECT DISTINCT

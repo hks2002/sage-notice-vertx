@@ -26,15 +26,15 @@ import io.vertx.core.json.JsonObject;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class DeadPurchaseLine extends BaseJob {
+public class DeadPurchaseLineBySO extends BaseJob {
   @Override
   protected void executeJob(JobExecutionContext context) throws JobExecutionException {
-    jobName = "DEAD_PURCHASE_LINE";
+    jobName = "DEAD_PURCHASE_LINE_BY_SO";
 
     DB.queryByFile(this.getClass().getSimpleName(), params)
         .onSuccess(list -> {
           if (list.isEmpty()) {
-            log.info("No dead purchase line found for site: {}", site);
+            log.info("No dead purchase line by SO found for site: {}", site);
           } else {
             StringBuilder msg = new StringBuilder();
             String totalTxt = MessageFormat.format(i18n.getString("TOTAL_LINE"), list.size());
@@ -99,7 +99,7 @@ public class DeadPurchaseLine extends BaseJob {
                 mailCc);
           }
         }).onFailure(err -> {
-          log.error("Error dead purchase line for site {}: {}", site, err.getMessage());
+          log.error("Error dead purchase line  by SO for site {}: {}", site, err.getMessage());
         });
   }
 
