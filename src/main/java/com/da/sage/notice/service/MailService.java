@@ -95,7 +95,7 @@ public class MailService {
       MimeMessage message = new MimeMessage(session);
       message.setFrom(new InternetAddress(SENDER));
 
-      // TODO If you want to do test, change the TO and CC email address.
+      // Notes: If you want to do test, change the TO and CC email address.
       // String to = "r.huang@dedienne-aero.com";
       // String cc = "";
       String to = String.join(",", toSet);
