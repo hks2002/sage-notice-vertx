@@ -35,7 +35,7 @@ public class ScheduleViewer {
     this.scheduler = scheduler;
   }
 
-  // 辅助类，用于存储触发时间信息
+  // Helper class to store trigger time information
   private static class TriggerTime implements Comparable<TriggerTime> {
     final Date time;
     final String triggerName;
@@ -57,7 +57,7 @@ public class ScheduleViewer {
     }
   }
 
-  // 显示特定时间范围内的触发计划
+  // Show scheduled triggers in a specific time range
   public void displayTriggersInRange(Date startTime, Date endTime) throws SchedulerException {
     List<TriggerTime> triggerTimes = new ArrayList<>();
 
@@ -89,6 +89,9 @@ public class ScheduleViewer {
     log.info("Displaying triggers from {} to {}", dateFormat.format(startTime), dateFormat.format(endTime));
     for (TriggerTime tt : triggerTimes) {
       log.info("{}\t\t\t{}", dateFormat.format(tt.time), tt.jobName);
+      log.debug("{}\t\t\t{}", dateFormat.format(tt.time), tt.jobGroup);
+      log.debug("{}\t\t\t{}", dateFormat.format(tt.time), tt.triggerName);
+      log.debug("{}\t\t\t{}", dateFormat.format(tt.time), tt.triggerGroup);
     }
 
   }

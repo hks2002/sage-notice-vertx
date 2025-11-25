@@ -21,8 +21,8 @@ public class i18nTest {
 
   @Test
   public void testCurrency() {
-    Locale enLocale = new Locale("en", "US");
-    Locale cnLocale = new Locale("zh", "CN");
+    Locale enLocale = new Locale.Builder().setLanguage("en").setRegion("US").build();
+    Locale cnLocale = new Locale.Builder().setLanguage("zh").setRegion("CN").build();
 
     log.info(L.getNumber(98838, enLocale));
     log.info(L.getNumber(98838, cnLocale));

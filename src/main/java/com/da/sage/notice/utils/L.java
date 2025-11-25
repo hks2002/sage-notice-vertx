@@ -18,21 +18,21 @@ import java.util.Locale;
 public class L {
   public static Locale getLocale(String language) {
     if (language == null || language.isEmpty()) {
-      return new Locale("en", "US");
+      return new Locale.Builder().setLanguage("en").setRegion("US").build();
     }
     if (language.contains("_")) {
       String[] arr = language.split("_");
-      return new Locale(arr[0], arr[1]);
+      return new Locale.Builder().setLanguage(arr[0]).setRegion(arr[1]).build();
     } else {
-      return new Locale(language);
+      return new Locale.Builder().setLanguage(language).build();
     }
   }
 
   public static Locale getLocale(String language, String country) {
     if (language == null || language.isEmpty()) {
-      return new Locale("en", "US");
+      return new Locale.Builder().setLanguage("en").setRegion("US").build();
     }
-    return new Locale(language, country);
+    return new Locale.Builder().setLanguage(language).setRegion(country).build();
   }
 
   public static String getDate(Long date, Locale locale) {
