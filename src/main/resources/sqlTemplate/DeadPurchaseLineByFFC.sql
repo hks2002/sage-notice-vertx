@@ -1,6 +1,7 @@
 WITH
   T0 AS (
     SELECT DISTINCT
+      PORDERP.PRHFCY_0,
       PORDERP.POHNUM_0,
       PORDERP.POPLIN_0,
       PORDERP.PJT_0,
@@ -46,17 +47,18 @@ WITH
   ),
   T2 AS (
     SELECT
-      T0.POHNUM_0,
-      T0.POPLIN_0,
-      T0.PJT_0,
-      T0.ITMREF_0,
+      T0.PRHFCY_0 AS Site,
+      T0.POHNUM_0 AS PurchaseNO,
+      T0.POPLIN_0 AS PurchaseLine,
+      T0.PJT_0 AS ProjectNO,
+      T0.ITMREF_0 AS PurchasePN,
       T0.Description,
-      T0.QTYSTU_0,
-      T0.LINATIAMT_0,
-      T0.NETCUR_0,
-      T0.CREDAT_0,
-      T0.CREUSR_0,
-      T0.ADDEML_0
+      T0.QTYSTU_0 AS PurchaseQty,
+      T0.LINATIAMT_0 AS PurchaseAmount,
+      T0.NETCUR_0 AS PurchaseCurrency,
+      T0.CREDAT_0 AS PurchaseDate,
+      T0.CREUSR_0 AS Purchaser,
+      T0.ADDEML_0 AS PurchaserEmail
     FROM
       T0
       LEFT JOIN T1 ON T1.POHNUM_0 = T0.POHNUM_0
@@ -64,44 +66,25 @@ WITH
     WHERE
       T1.POHNUM_0 IS NULL
       AND T1.POPLIN_0 IS NULL
-  ),
-  T3 AS (
-    SELECT DISTINCT
-      IIF (
-        SORDERQ.YSOQ_PJTORI_0 = '',
-        SORDERQ.YSOH_PJT_0,
-        SORDERQ.YSOQ_PJTORI_0
-      ) AS ProjectNO,
-      SORDERQ.SOHNUM_0 AS OrderNO,
-      SORDERQ.ITMREF_0 AS PN,
-      SORDERQ.QTY_0 AS Qty,
-      SORDER.ORDDAT_0 AS OrderDate
-    FROM
-      EXPLOIT.SORDERQ AS SORDERQ
-      INNER JOIN EXPLOIT.SORDER SORDER ON SORDERQ.SOHNUM_0 = SORDER.SOHNUM_0
-      AND SORDER.SALFCY_0 = '#{Site}'
-      AND SORDERQ.SALFCY_0 = '#{Site}'
-      AND SORDERQ.SOQSTA_0 = 3 --- Line status: 3=Closed
   )
 SELECT DISTINCT
-  T2.POHNUM_0 AS PurchaseNO,
-  T2.POPLIN_0 AS PurchaseLine,
-  T2.ITMREF_0 AS PurchasePN,
+  T2.Site,
+  T2.PurchaseNO,
+  T2.PurchaseLine,
+  T2.PurchasePN,
   T2.Description,
-  T2.QTYSTU_0 AS PurchaseQty,
-  T2.LINATIAMT_0 AS PurchaseAmount,
-  T2.NETCUR_0 AS PurchaseCurrency,
-  T2.ADDEML_0 AS PurchaserEmail,
-  T2.CREDAT_0 AS PurchaseDate,
-  T2.CREUSR_0 AS Purchaser,
-  T3.ProjectNO,
-  T3.OrderNO,
-  T3.PN AS SalesPN,
-  T3.Qty AS SalesQty,
-  T3.OrderDate
+  T2.PurchaseQty,
+  T2.PurchaseAmount,
+  T2.PurchaseCurrency,
+  T2.PurchaserEmail,
+  T2.PurchaseDate,
+  T2.Purchaser,
+  T2.ProjectNO,
+  SINVOICED.NUM_0 AS InvoiceNO,
+  SINVOICED.INVDAT_0 AS InvoiceDate
 FROM
   T2
-  INNER JOIN T3 ON T2.PJT_0 = T3.ProjectNO
-ORDER BY
-  T2.CREUSR_0 ASC,
-  T3.OrderDate ASC
+  INNER JOIN EXPLOIT.SINVOICED SINVOICED ON SINVOICED.YSOH_PJT_0 = T2.ProjectNO
+  AND SINVOICED.SALFCY_0 = T2.Site
+  INNER JOIN EXPLOIT.SINVOICEV SINVOICEV ON SINVOICED.NUM_0 = SINVOICEV.NUM_0
+  AND SINVOICEV.SIVTYP_0 = 'FFC' -- ONLY FFC
