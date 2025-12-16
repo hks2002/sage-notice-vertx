@@ -1,47 +1,43 @@
 on:
-    workflow_dispatch:
-    push:
-        branches:
-            - 'master'
+  workflow_dispatch:
+  push:
+    branches:
+      - "master"
 
 # https://github.com/OWNER/REPO/settings/actions
 # MUST CHANGE GITHUB_TOKEN PERMISSION FROM READ TO WRITE
 # MUST CHANGE GITHUB_TOKEN PERMISSION ALLOW PULL REQUESTS
 # ⚠ ⚠ ⚠ You need merge pull request manually ⚠ ⚠ ⚠
 permissions:
-    contents: write
-    pull-requests: write
-    issues: write
+  contents: write
+  pull-requests: write
+  issues: write
 
 jobs:
-    build-test-release:
-        strategy:
-            matrix:
-                os: [ubuntu-latest]
-        runs-on: ${{ matrix.os }}
+  build-test-release:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
 
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-            - name: Install JDK
-              uses: actions/setup-java@v4
-              with:
-                  java-version: 21
-                  distribution: 'adopt'
-                  cache: 'maven'
+      - name: Install JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: "adopt"
+          cache: "maven"
 
-            - name: Run Test
-              run: |        
-                  chmod +x mvnw
-                  ./mvnw test
+      - name: Run Test
+        run: |
+          chmod +x mvnw
+          ./mvnw test
 
-            - uses: google-github-actions/release-please-action@v3
-              with:
-                  release-type: maven
-                  #package-name: release-please-action
-                  token: ${{ secrets.GITHUB_TOKEN }}
-                  bump-minor-pre-major: true
-                  bump-patch-for-minor-pre-major: true
-                  extra-files: |
-                    CHANGELOG.md
+      - uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release-type: maven
+          config-file: release-please-config.json
